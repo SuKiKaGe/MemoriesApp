@@ -11,7 +11,7 @@ class MemoriesManager private constructor() {
         val instance: MemoriesManager by lazy { HOLDER.INSTANCE }
     }
 
-    lateinit var memories: ArrayList<Memory>
+    var memories: ArrayList<Memory> = ArrayList()
     var maxId: Int = 1
 
     fun addMemorie(newMemorie: Memory)

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MemoriesApp</string>
+    <string name="addmemory">addMemory</string>
 </resources>

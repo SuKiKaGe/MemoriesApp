@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.activity_create_memorie.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-const val ACTION = "New Memorie"
+const val ACTION = "New/Edit Memory"
 
 class CreateMemorie : AppCompatActivity() {
 
@@ -31,16 +31,17 @@ class CreateMemorie : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val itemId = item!!.itemId
-
-        val option = when(itemId)
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean
+    {
+        when(item!!.itemId)
         {
             R.id.save -> {
                 var newMemory = Memory()
                 newMemory.title = etTitle.text.toString()
                 newMemory.description = etDescription.text.toString()
                 MemoriesManager.instance.addMemorie(newMemory)
+                setResult(NEW_MEMORY)
+                finish()
             }
             else -> Toast.makeText(this, "Something was wrong", Toast.LENGTH_SHORT).show()
         }

@@ -7,6 +7,7 @@
     tools:context=".MainActivity">
 
     <ListView
+        android:id="@+id/listMemories"
         android:layout_width="409dp"
         android:layout_height="705dp"
         app:layout_constraintBottom_toBottomOf="parent"
