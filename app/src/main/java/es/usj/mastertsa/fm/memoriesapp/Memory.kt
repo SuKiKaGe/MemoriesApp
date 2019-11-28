@@ -12,10 +12,17 @@ enum class Categories {
     Travel
 }
 
-class Memorie {
+class Memory {
 
     var id: Int = 0
-    var title: String = ""
+    lateinit var title: String
     lateinit var categorie: Categories
     lateinit var date: Date
+    lateinit var description: String
+
+    lateinit var photoPath: String
+    lateinit var videoPath: String
+    lateinit var audioPath: String
+
+    lateinit var ubication: UbicationData
 }
