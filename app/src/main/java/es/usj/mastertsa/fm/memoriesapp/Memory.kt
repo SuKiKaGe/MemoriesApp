@@ -25,4 +25,10 @@ class Memory {
     lateinit var audioPath: String
 
     lateinit var location: LocationData
+
+    constructor (title: String, description: String)
+    {
+        this.title = title
+        this.description = description
+    }
 }

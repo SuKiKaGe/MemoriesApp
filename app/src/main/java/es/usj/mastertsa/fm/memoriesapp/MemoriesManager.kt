@@ -32,6 +32,7 @@ class MemoriesManager private constructor()
 
     fun updateMemory(memory: Memory)
     {
-        memories[memory.id] = memory
+        val position = memories.indexOf(memories.find { it.id == memory.id })
+        memories[position] = memory
     }
 }

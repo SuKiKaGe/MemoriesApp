@@ -13,4 +13,6 @@
     <string name="photo_image_content_description">Photo Image Content Description</string>
     <string name="video_image_content_description">Video ImageContent Description</string>
     <string name="audio_image_content_description">Audio ImageContent Description</string>
+    <string name="deltememory">delteMemory</string>
+    <string name="editmemory">editMemory</string>
 </resources>

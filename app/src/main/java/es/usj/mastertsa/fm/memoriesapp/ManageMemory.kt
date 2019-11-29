@@ -10,10 +10,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 const val ACTION = "New/Edit Memory"
-const val TITLE = "Memory Title"
+const val ID = "Memory Id"
 
 class ManageMemory : AppCompatActivity()
 {
+    var idToEdit: Int = 0
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -28,13 +29,23 @@ class ManageMemory : AppCompatActivity()
             }
             "Edit Memory" ->
             {
-                etTitle.setText(intent.getStringExtra(TITLE))
+                idToEdit = intent.getIntExtra(ID, 0)
+                setEditData(idToEdit)
             }
             else ->
             {
                 Toast.makeText(this, "Unknown Action For Memory", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    fun setEditData(id: Int)
+    {
+        val memory = MemoriesManager.instance.memories.find { it.id == id }
+
+        etTitle.setText(memory?.title)
+        etDescription.setText(memory?.description)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -48,7 +59,8 @@ class ManageMemory : AppCompatActivity()
         when(item!!.itemId)
         {
             R.id.save -> {
-                val newMemory = Memory()
+                val newMemory = Memory("Recuerdo 1", "Descripción de recuerdo 1")
+                newMemory.id = idToEdit
                 newMemory.title = etTitle.text.toString()
                 newMemory.description = etDescription.text.toString()
 

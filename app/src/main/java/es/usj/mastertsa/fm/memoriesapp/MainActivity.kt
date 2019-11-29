@@ -2,7 +2,6 @@ package es.usj.mastertsa.fm.memoriesapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
@@ -21,19 +20,18 @@ class MainActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        MemoriesManager.instance.addMemory(Memory("Recuerdo 1", "Descripción de recuerdo 1"))
+        MemoriesManager.instance.addMemory(Memory("Recuerdo 2", "Descripción de recuerdo 2"))
+        MemoriesManager.instance.addMemory(Memory("Recuerdo 3", "Descripción de recuerdo 3"))
+
         listMemories.adapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, MemoriesManager.instance.memories)
 
         listMemories.setOnItemClickListener { parent, _, position, _ ->
-            val itemName = parent.getItemAtPosition(position) as String// The item that was clicked
+            val item = MemoriesManager.instance.memories.get(position)// The item that was clicked
 
-            Log.i("TAG", itemName)
-
-            val item = MemoriesManager.instance.memories.find { it.title == itemName }
-
-            var intent = Intent(this, ManageMemory::class.java)
-            intent.putExtra(ACTION, "Edit Memory")
-            intent.putExtra(TITLE, item?.title)
-            startActivityForResult(intent, NEW_MEMORY)
+            var intent = Intent(this, ViewMemory::class.java)
+            intent.putExtra(ID, item?.id)
+            startActivity(intent)
         }
     }
 
@@ -62,7 +60,6 @@ class MainActivity : AppCompatActivity()
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
     {
         //TODO: Quitar el test y poner objetos de lista personalizados
-        //TODO: Investigar por qué el primer elemento se esconde detrás del actionbar
         var test = ArrayList<String>()
 
         for (i in MemoriesManager.instance.memories)
@@ -76,10 +73,10 @@ class MainActivity : AppCompatActivity()
             {
                 listMemories.adapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, test)
             }
-            UPDATE_MEMORY ->
+            /*UPDATE_MEMORY ->
             {
                 listMemories.adapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, test)
-            }
+            }*/
         }
 
         super.onActivityResult(requestCode, resultCode, data)

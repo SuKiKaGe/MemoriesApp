@@ -136,14 +136,6 @@
                 tools:srcCompat="@tools:sample/avatars" />
         </LinearLayout>
 
-        <!--
-        <androidx.appcompat.widget.ScrollingTabContainerView.TabView
-            android:id="@+id/mapView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="4" />
-        -->
-
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
