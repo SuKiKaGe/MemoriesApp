@@ -5,6 +5,6 @@
     <item
         android:id="@+id/addMemory"
         android:icon="@android:drawable/ic_menu_add"
-        android:title="@string/addmemory"
+        android:title="@string/add_memory"
         app:showAsAction="ifRoom" />
 </menu>

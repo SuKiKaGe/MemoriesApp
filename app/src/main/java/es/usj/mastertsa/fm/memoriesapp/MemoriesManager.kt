@@ -1,36 +1,37 @@
 package es.usj.mastertsa.fm.memoriesapp
 
-import android.content.Context
-
-class MemoriesManager private constructor() {
-    private object HOLDER {
+class MemoriesManager private constructor()
+{
+    private object HOLDER
+    {
         val INSTANCE = MemoriesManager()
     }
 
-    companion object {
+    companion object
+    {
         val instance: MemoriesManager by lazy { HOLDER.INSTANCE }
     }
 
     var memories: ArrayList<Memory> = ArrayList()
     var maxId: Int = 1
 
-    fun addMemorie(newMemorie: Memory)
+    fun addMemory(newMemory: Memory)
     {
-        newMemorie.id = maxId
+        newMemory.id = maxId
         maxId++
 
-        memories.add(newMemorie)
+        memories.add(newMemory)
     }
 
-    fun deleteMemorie(id: Int)
+    fun deleteMemory(id: Int)
     {
-        var memorieToDelete = memories.find { it.id == id }
+        var memoryToDelete = memories.find { it.id == id }
 
-        memories.remove(memorieToDelete)
+        memories.remove(memoryToDelete)
     }
 
-    fun updateMemorie(memorie: Memory)
+    fun updateMemory(memory: Memory)
     {
-        memories.set(memorie.id, memorie)
+        memories[memory.id] = memory
     }
 }

@@ -16,7 +16,7 @@ class Memory {
 
     var id: Int = 0
     lateinit var title: String
-    lateinit var categorie: Categories
+    lateinit var category: Categories
     lateinit var date: Date
     lateinit var description: String
 
@@ -24,5 +24,5 @@ class Memory {
     lateinit var videoPath: String
     lateinit var audioPath: String
 
-    lateinit var ubication: UbicationData
+    lateinit var location: LocationData
 }
