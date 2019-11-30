@@ -5,7 +5,7 @@ import java.util.*
 enum class Categories {
     Good,
     Bad,
-    Birthday,
+    Celebration,
     DarkList,
     Love,
     Friends,
@@ -26,9 +26,10 @@ class Memory {
 
     lateinit var location: LocationData
 
-    constructor (title: String, description: String)
+    constructor (title: String, description: String, date: Date = Date())
     {
         this.title = title
         this.description = description
+        this.date = date
     }
 }

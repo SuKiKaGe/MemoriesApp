@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 const val NEW_MEMORY = 10
 const val UPDATE_MEMORY = 11
+const val VIEW_MEMORY = 12
 
 class MainActivity : AppCompatActivity()
 {
@@ -24,14 +25,14 @@ class MainActivity : AppCompatActivity()
         MemoriesManager.instance.addMemory(Memory("Recuerdo 2", "Descripción de recuerdo 2"))
         MemoriesManager.instance.addMemory(Memory("Recuerdo 3", "Descripción de recuerdo 3"))
 
-        listMemories.adapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, MemoriesManager.instance.memories)
+        listMemories.adapter = MemoryAdapter(this)
 
         listMemories.setOnItemClickListener { parent, _, position, _ ->
             val item = MemoriesManager.instance.memories.get(position)// The item that was clicked
 
             var intent = Intent(this, ViewMemory::class.java)
             intent.putExtra(ID, item?.id)
-            startActivity(intent)
+            startActivityForResult(intent, VIEW_MEMORY)
         }
     }
 
@@ -59,24 +60,17 @@ class MainActivity : AppCompatActivity()
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
     {
-        //TODO: Quitar el test y poner objetos de lista personalizados
-        var test = ArrayList<String>()
-
-        for (i in MemoriesManager.instance.memories)
-        {
-            test.add(i.title)
-        }
 
         when(requestCode)
         {
             NEW_MEMORY ->
             {
-                listMemories.adapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, test)
+                listMemories.adapter = MemoryAdapter(this)
             }
-            /*UPDATE_MEMORY ->
+            VIEW_MEMORY ->
             {
-                listMemories.adapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, test)
-            }*/
+                if(resultCode == UPDATE_MEMORY) listMemories.adapter = MemoryAdapter(this)
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data)

@@ -15,4 +15,5 @@
     <string name="audio_image_content_description">Audio ImageContent Description</string>
     <string name="deltememory">delteMemory</string>
     <string name="editmemory">editMemory</string>
+    <string name="category_icon">category icon</string>
 </resources>

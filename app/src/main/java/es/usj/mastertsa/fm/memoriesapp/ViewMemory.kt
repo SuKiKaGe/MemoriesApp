@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_view_memory.*
 class ViewMemory : AppCompatActivity() {
 
     var id: Int = 0
+    var memoryUpdated = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +41,7 @@ class ViewMemory : AppCompatActivity() {
         when(item!!.itemId)
         {
             R.id.edit -> {
+                memoryUpdated = UPDATE_MEMORY
                 var intent = Intent(this, ManageMemory::class.java)
                 intent.putExtra(ACTION, "Edit Memory")
                 intent.putExtra(ID, id)
@@ -57,5 +59,10 @@ class ViewMemory : AppCompatActivity() {
         {
             UPDATE_MEMORY -> setViewContent()
         }
+    }
+
+    override fun onBackPressed() {
+        setResult(memoryUpdated)
+        super.onBackPressed()
     }
 }

@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ViewMemory"></activity>
+        <activity android:name=".MemoryAdapter"></activity>
+        <activity android:name=".ViewMemory" />
         <activity android:name=".ManageMemory" />
         <activity android:name=".MainActivity">
             <intent-filter>
