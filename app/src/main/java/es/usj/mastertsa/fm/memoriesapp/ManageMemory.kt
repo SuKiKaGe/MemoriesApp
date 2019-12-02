@@ -7,12 +7,13 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_create_memory.*
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 const val ACTION = "New/Edit Memory"
 const val ID = "Memory Id"
@@ -45,6 +46,19 @@ class ManageMemory : AppCompatActivity()
             {
                 Toast.makeText(this, "Unknown Action For Memory", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        val spinner: Spinner = findViewById(R.id.spinner)
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.category_array,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner
+            spinner.adapter = adapter
         }
 
         btnPhoto.setOnClickListener {

@@ -16,4 +16,14 @@
     <string name="deltememory">delteMemory</string>
     <string name="editmemory">editMemory</string>
     <string name="category_icon">category icon</string>
+    <string name="tvCategory">Category</string>
+    <string-array name="category_array">
+        <item>Good</item>
+        <item>Bad</item>
+        <item>Celebration</item>
+        <item>BlackList</item>
+        <item>Love</item>
+        <item>Friends</item>
+        <item>Travel</item>
+    </string-array>
 </resources>
