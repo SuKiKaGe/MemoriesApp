@@ -8,10 +8,9 @@ import android.view.MenuItem
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_view_memory.*
 
-class ViewMemory : AppCompatActivity() {
-
+class ViewMemory : AppCompatActivity()
+{
     var id: Int = 0
-    var memoryUpdated = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,11 +40,15 @@ class ViewMemory : AppCompatActivity() {
         when(item!!.itemId)
         {
             R.id.edit -> {
-                memoryUpdated = UPDATE_MEMORY
                 var intent = Intent(this, ManageMemory::class.java)
                 intent.putExtra(ACTION, "Edit Memory")
                 intent.putExtra(ID, id)
                 startActivityForResult(intent, UPDATE_MEMORY)
+            }
+            R.id.delete -> {
+                MemoriesManager.instance.deleteMemory(id)
+                setResult(DELETE_MEMORY)
+                finish()
             }
             else -> Toast.makeText(this, "Something was wrong", Toast.LENGTH_SHORT).show()
         }
@@ -53,7 +56,8 @@ class ViewMemory : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    {
         super.onActivityResult(requestCode, resultCode, data)
         when(requestCode)
         {
@@ -61,8 +65,9 @@ class ViewMemory : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        setResult(memoryUpdated)
+    override fun onBackPressed()
+    {
         super.onBackPressed()
+        setResult(UNMODIFIED)
     }
 }

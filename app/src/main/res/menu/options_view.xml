@@ -10,6 +10,6 @@
     <item
         android:id="@+id/delete"
         android:icon="@android:drawable/ic_menu_delete"
-        android:title="@string/deltememory"
+        android:title="@string/delete_memory"
         app:showAsAction="ifRoom" />
 </menu>

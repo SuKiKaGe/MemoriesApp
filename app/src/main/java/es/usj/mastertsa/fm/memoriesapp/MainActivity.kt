@@ -4,15 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
-
+const val UNMODIFIED = 0
 const val NEW_MEMORY = 10
 const val UPDATE_MEMORY = 11
 const val VIEW_MEMORY = 12
+const val DELETE_MEMORY = 13
 
 class MainActivity : AppCompatActivity()
 {
@@ -63,13 +63,9 @@ class MainActivity : AppCompatActivity()
 
         when(requestCode)
         {
-            NEW_MEMORY ->
+            NEW_MEMORY, UPDATE_MEMORY, VIEW_MEMORY, DELETE_MEMORY ->
             {
                 listMemories.adapter = MemoryAdapter(this)
-            }
-            VIEW_MEMORY ->
-            {
-                if(resultCode == UPDATE_MEMORY) listMemories.adapter = MemoryAdapter(this)
             }
         }
 
