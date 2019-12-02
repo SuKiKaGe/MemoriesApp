@@ -21,7 +21,7 @@ class ViewMemory : AppCompatActivity()
         setViewContent()
     }
 
-    fun setViewContent()
+    private fun setViewContent()
     {
         val memory = MemoriesManager.instance.memories.find { it.id == id }
         title = memory?.title
@@ -40,7 +40,7 @@ class ViewMemory : AppCompatActivity()
         when(item!!.itemId)
         {
             R.id.edit -> {
-                var intent = Intent(this, ManageMemory::class.java)
+                val intent = Intent(this, ManageMemory::class.java)
                 intent.putExtra(ACTION, "Edit Memory")
                 intent.putExtra(ID, id)
                 startActivityForResult(intent, UPDATE_MEMORY)
