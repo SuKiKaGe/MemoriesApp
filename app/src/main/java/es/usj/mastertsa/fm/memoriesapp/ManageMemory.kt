@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_create_memory.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 const val ACTION = "New/Edit Memory"
 const val ID = "Memory Id"
 const val REQUEST_IMAGE_CAPTURE = 1
@@ -32,22 +33,6 @@ class ManageMemory : AppCompatActivity()
 
         title = intent.getStringExtra(ACTION)
 
-        when (title) {
-            "New Memory" ->
-            {
-                etDate.setText(SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date()))
-            }
-            "Edit Memory" ->
-            {
-                idToEdit = intent.getIntExtra(ID, 0)
-                setEditData(idToEdit)
-            }
-            else ->
-            {
-                Toast.makeText(this, "Unknown Action For Memory", Toast.LENGTH_SHORT).show()
-            }
-        }
-
         val spinner: Spinner = findViewById(R.id.spinner)
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter.createFromResource(
@@ -59,6 +44,22 @@ class ManageMemory : AppCompatActivity()
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             // Apply the adapter to the spinner
             spinner.adapter = adapter
+        }
+
+        when (title) {
+            "New Memory" ->
+            {
+                etDate.setText(SimpleDateFormat("dd/mm/yyyy", Locale.getDefault()).format(Date()))
+            }
+            "Edit Memory" ->
+            {
+                idToEdit = intent.getIntExtra(ID, 0)
+                setEditData(idToEdit)
+            }
+            else ->
+            {
+                Toast.makeText(this, "Unknown Action For Memory", Toast.LENGTH_SHORT).show()
+            }
         }
 
         btnPhoto.setOnClickListener {
@@ -80,10 +81,26 @@ class ManageMemory : AppCompatActivity()
         btnAudio.setOnClickListener {
             Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION).also {
                     takeAudioIntent -> takeAudioIntent.resolveActivity(packageManager)?.also {
-                startActivityForResult(takeAudioIntent, REQUEST_AUDIO_CAPTURE)
+                    startActivityForResult(takeAudioIntent, REQUEST_AUDIO_CAPTURE)
                 }
             }
         }
+    }
+
+    private fun getIndexByString(spinner: Spinner, string: String): Int
+    {
+        var index = 0
+
+        for (i in 0 until spinner.count)
+        {
+            if (spinner.getItemAtPosition(i).toString().equals(string, ignoreCase = true))
+            {
+                index = i
+                break
+            }
+        }
+
+        return index
     }
 
     private fun setEditData(id: Int)
@@ -91,8 +108,9 @@ class ManageMemory : AppCompatActivity()
         val memory = MemoriesManager.instance.memories.find { it.id == id }
 
         etTitle.setText(memory?.title)
+        spinner.setSelection(getIndexByString(spinner, memory?.category.toString()))
+        etDate.setText((SimpleDateFormat("dd/mm/yyyy").format(memory?.date)))
         etDescription.setText(memory?.description)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -106,7 +124,9 @@ class ManageMemory : AppCompatActivity()
         when(item!!.itemId)
         {
             R.id.save -> {
-                val newMemory = Memory(etTitle.text.toString(), etDescription.text.toString())
+                val newMemory = Memory(etTitle.text.toString(), spinner.selectedItem.toString(),
+                    SimpleDateFormat("dd/mm/yyyy").parse( etDate.text.toString() ),
+                    etDescription.text.toString())
                 newMemory.id = idToEdit
 
                 when (title)

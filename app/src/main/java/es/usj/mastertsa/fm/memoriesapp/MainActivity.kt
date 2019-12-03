@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import java.text.SimpleDateFormat
 
 const val UNMODIFIED = 0
 const val NEW_MEMORY = 10
@@ -21,9 +22,15 @@ class MainActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        MemoriesManager.instance.addMemory(Memory("Recuerdo 1", "Descripción de recuerdo 1"))
-        MemoriesManager.instance.addMemory(Memory("Recuerdo 2", "Descripción de recuerdo 2"))
-        MemoriesManager.instance.addMemory(Memory("Recuerdo 3", "Descripción de recuerdo 3"))
+        MemoriesManager.instance.addMemory(Memory("Recuerdo 1", "Bad",
+            SimpleDateFormat("dd/mm/yyyy").parse("01/01/2011"),
+            "Descripción de recuerdo 1"))
+        MemoriesManager.instance.addMemory(Memory("Recuerdo 2", "BlackList",
+            SimpleDateFormat("dd/mm/yyyy").parse("02/02/2012"),
+            "Descripción de recuerdo 2"))
+        MemoriesManager.instance.addMemory(Memory("Recuerdo 3", "Travel",
+            SimpleDateFormat("dd/mm/yyyy").parse("03/03/2013"),
+            "Descripción de recuerdo 3"))
 
         listMemories.adapter = MemoryAdapter(this)
 

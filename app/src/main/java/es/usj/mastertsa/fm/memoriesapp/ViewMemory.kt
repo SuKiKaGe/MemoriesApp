@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_view_memory.*
+import java.text.SimpleDateFormat
 
 class ViewMemory : AppCompatActivity()
 {
@@ -25,6 +26,8 @@ class ViewMemory : AppCompatActivity()
     {
         val memory = MemoriesManager.instance.memories.find { it.id == id }
         title = memory?.title
+        tvCategoryItem.text = memory?.category.toString()
+        tvDateItem.text = (SimpleDateFormat("dd/mm/yyyy").format(memory?.date))
         tvDescription.text = memory?.description
     }
 

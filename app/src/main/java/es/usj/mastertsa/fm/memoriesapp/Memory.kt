@@ -2,34 +2,27 @@ package es.usj.mastertsa.fm.memoriesapp
 
 import java.util.*
 
-enum class Categories {
-    Good,
-    Bad,
-    Celebration,
-    DarkList,
-    Love,
-    Friends,
-    Travel
-}
+enum class Categories { Good, Bad, Celebration, BlackList, Love, Friends, Travel }
 
-class Memory {
+class Memory
+{
+    var id : Int = 0
+    var title : String
+    var category : Categories
+    var date : Date
+    var description : String
 
-    var id: Int = 0
-    lateinit var title: String
-    lateinit var category: Categories
-    lateinit var date: Date
-    lateinit var description: String
+    lateinit var photoPath : String
+    lateinit var videoPath : String
+    lateinit var audioPath : String
 
-    lateinit var photoPath: String
-    lateinit var videoPath: String
-    lateinit var audioPath: String
+    lateinit var location : LocationData
 
-    lateinit var location: LocationData
-
-    constructor (title: String, description: String, date: Date = Date())
+    constructor (title : String, category : String, date : Date = Date(), description : String)
     {
         this.title = title
-        this.description = description
+        this.category = Categories.valueOf(category)
         this.date = date
+        this.description = description
     }
 }

@@ -1,8 +1,6 @@
 package es.usj.mastertsa.fm.memoriesapp
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +11,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class MemoryAdapter(private val context: Context, private val dataSource: ArrayList<Memory> = MemoriesManager.instance.memories) : BaseAdapter()
+class MemoryAdapter(context: Context, private val dataSource: ArrayList<Memory> = MemoriesManager.instance.memories) : BaseAdapter()
 {
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
@@ -40,7 +38,7 @@ class MemoryAdapter(private val context: Context, private val dataSource: ArrayL
         val memory = getItem(position) as Memory
 
         titleTextView.text = memory.title
-        dateTextView.text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(memory.date)
+        dateTextView.text = SimpleDateFormat("dd/mm/yyyy", Locale.getDefault()).format(memory.date)
 
         return rowView
     }
