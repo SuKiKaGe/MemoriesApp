@@ -1,5 +1,6 @@
 package es.usj.mastertsa.fm.memoriesapp
 
+import android.location.Location
 import java.util.*
 
 enum class Categories { Good, Bad, Celebration, BlackList, Love, Friends, Travel }
@@ -16,7 +17,7 @@ class Memory
     lateinit var videoPath : String
     lateinit var audioPath : String
 
-    lateinit var location : LocationData
+    lateinit var location : Location
 
     constructor (title : String, category : String, date : Date = Date(), description : String)
     {

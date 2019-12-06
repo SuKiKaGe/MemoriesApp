@@ -1,7 +1,12 @@
 package es.usj.mastertsa.fm.memoriesapp
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -22,9 +27,13 @@ const val REQUEST_IMAGE_CAPTURE = 1
 const val REQUEST_VIDEO_CAPTURE = 2
 const val REQUEST_AUDIO_CAPTURE = 3
 
-class ManageMemory : AppCompatActivity()
+class ManageMemory : AppCompatActivity(), LocationListener
 {
     var idToEdit: Int = 0
+
+    var currentLocation: Location? = null
+
+    private lateinit var locationManager: LocationManager
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -34,22 +43,16 @@ class ManageMemory : AppCompatActivity()
         title = intent.getStringExtra(ACTION)
 
         val spinner: Spinner = findViewById(R.id.spinner)
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter.createFromResource(
-            this,
-            R.array.category_array,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            // Specify the layout to use when the list of choices appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner
-            spinner.adapter = adapter
-        }
+        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, Categories.values())
+
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         when (title) {
             "New Memory" ->
             {
                 etDate.setText(SimpleDateFormat("dd/mm/yyyy", Locale.getDefault()).format(Date()))
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
+
             }
             "Edit Memory" ->
             {
@@ -175,5 +178,21 @@ class ManageMemory : AppCompatActivity()
                 // make use of this MediaStore uri
                 // e.g. store it somewhere
         }
+    }
+
+    override fun onLocationChanged(location: Location?) {
+        currentLocation = location
+    }
+
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onProviderEnabled(provider: String?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onProviderDisabled(provider: String?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
