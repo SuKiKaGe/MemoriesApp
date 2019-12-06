@@ -25,8 +25,6 @@ import androidx.core.app.ActivityCompat
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 
 
-
-
 const val ACTION = "New/Edit Memory"
 const val ID = "Memory Id"
 const val REQUEST_IMAGE_CAPTURE = 1
@@ -48,12 +46,13 @@ class ManageMemory : AppCompatActivity(), LocationListener
 
         val spinner: Spinner = findViewById(R.id.spinner)
         spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, Categories.values())
-        
+
         when (title) {
             "New Memory" ->
             {
                 etDate.setText(SimpleDateFormat("dd/mm/yyyy", Locale.getDefault()).format(Date()))
                 val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
                 if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                 {

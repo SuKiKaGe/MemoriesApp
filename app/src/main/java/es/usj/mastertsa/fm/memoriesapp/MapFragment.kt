@@ -36,8 +36,11 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback {
     override fun onMapReady(p0: GoogleMap?)
     {
         mMap = p0
-        mMap?.addMarker(MarkerOptions().position(latLng))
-        mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
+        if(!latLng.equals(LatLng(0.0,0.0)))
+        {
+            mMap?.addMarker(MarkerOptions().position(latLng))
+            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
+        }
     }
 
     fun setNewLocation(location: Location)
