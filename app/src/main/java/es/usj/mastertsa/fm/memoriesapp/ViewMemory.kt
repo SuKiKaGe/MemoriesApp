@@ -29,6 +29,8 @@ class ViewMemory : AppCompatActivity()
         tvCategoryItem.text = memory?.category.toString()
         tvDateItem.text = (SimpleDateFormat("dd/mm/yyyy").format(memory?.date))
         tvDescription.text = memory?.description
+
+        (mapFragment as MapFragment).setNewLocation(memory!!.location)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean

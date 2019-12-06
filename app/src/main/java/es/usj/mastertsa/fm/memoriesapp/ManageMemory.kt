@@ -1,7 +1,5 @@
 package es.usj.mastertsa.fm.memoriesapp
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.location.Location
@@ -19,6 +17,14 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_create_memory.*
 import java.text.SimpleDateFormat
 import java.util.*
+import android.content.pm.PackageManager
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.Context
+import android.os.Looper
+import androidx.core.app.ActivityCompat
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+
+
 
 
 const val ACTION = "New/Edit Memory"
@@ -29,11 +35,9 @@ const val REQUEST_AUDIO_CAPTURE = 3
 
 class ManageMemory : AppCompatActivity(), LocationListener
 {
+
     var idToEdit: Int = 0
-
-    var currentLocation: Location? = null
-
-    private lateinit var locationManager: LocationManager
+    lateinit var location: Location
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -44,15 +48,21 @@ class ManageMemory : AppCompatActivity(), LocationListener
 
         val spinner: Spinner = findViewById(R.id.spinner)
         spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, Categories.values())
-
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
+        
         when (title) {
             "New Memory" ->
             {
                 etDate.setText(SimpleDateFormat("dd/mm/yyyy", Locale.getDefault()).format(Date()))
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
-
+                val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                {
+                    ActivityCompat.requestPermissions(this, arrayOf(ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION),225)
+                    return
+                } else
+                {
+                    locationManager.requestSingleUpdate( LocationManager.NETWORK_PROVIDER,this, Looper.getMainLooper())
+                }
             }
             "Edit Memory" ->
             {
@@ -114,6 +124,7 @@ class ManageMemory : AppCompatActivity(), LocationListener
         spinner.setSelection(getIndexByString(spinner, memory?.category.toString()))
         etDate.setText((SimpleDateFormat("dd/mm/yyyy").format(memory?.date)))
         etDescription.setText(memory?.description)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -128,9 +139,10 @@ class ManageMemory : AppCompatActivity(), LocationListener
         {
             R.id.save -> {
                 val newMemory = Memory(etTitle.text.toString(), spinner.selectedItem.toString(),
-                    SimpleDateFormat("dd/mm/yyyy").parse( etDate.text.toString() ),
+                    SimpleDateFormat("dd/mm/yyyy").parse( etDate.text.toString()),
                     etDescription.text.toString())
                 newMemory.id = idToEdit
+                newMemory.location = location
 
                 when (title)
                 {
@@ -180,19 +192,13 @@ class ManageMemory : AppCompatActivity(), LocationListener
         }
     }
 
-    override fun onLocationChanged(location: Location?) {
-        currentLocation = location
+    override fun onLocationChanged(p0: Location?)
+    {
+        location = p0!!
+        (mapFragment as MapFragment).setNewLocation(location)
     }
 
-    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onProviderEnabled(provider: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onProviderDisabled(provider: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
+    override fun onProviderEnabled(p0: String?) {}
+    override fun onProviderDisabled(p0: String?) {}
 }

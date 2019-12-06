@@ -149,6 +149,13 @@
                 tools:srcCompat="@tools:sample/avatars" />
         </LinearLayout>
 
+        <fragment
+            android:id="@+id/mapFragment"
+            android:name="es.usj.mastertsa.fm.memoriesapp.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

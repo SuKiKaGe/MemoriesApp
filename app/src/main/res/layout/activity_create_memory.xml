@@ -14,7 +14,6 @@
         android:layout_height="match_parent"
         android:isScrollContainer="true"
         android:orientation="vertical"
-        android:scrollIndicators="right"
         android:weightSum="10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,8 +27,8 @@
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/edit_text_memory_title_hint"
-            android:inputType="textPersonName"
-            android:importantForAutofill="no" />
+            android:importantForAutofill="no"
+            android:inputType="textPersonName" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -102,18 +101,18 @@
 
             <Button
                 android:id="@+id/btnPhoto"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                style="?android:attr/borderlessButtonStyle"
                 android:text="@string/button_photo_text" />
 
             <Button
                 android:id="@+id/btnVideo"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                style="?android:attr/borderlessButtonStyle"
                 android:text="@string/button_video_text" />
 
             <Button
@@ -154,6 +153,14 @@
                 android:contentDescription="@string/audio_image_content_description"
                 tools:srcCompat="@tools:sample/avatars" />
         </LinearLayout>
+
+        <fragment
+            android:id="@+id/mapFragment"
+            android:name="es.usj.mastertsa.fm.memoriesapp.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            tools:layout="@layout/fragment_map" />
 
     </LinearLayout>
 
