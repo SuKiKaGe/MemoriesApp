@@ -36,19 +36,13 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback {
     override fun onMapReady(p0: GoogleMap?)
     {
         mMap = p0
-        if(!latLng.equals(LatLng(0.0,0.0)))
-        {
-            mMap?.addMarker(MarkerOptions().position(latLng))
-            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
-        }
     }
 
-    fun setNewLocation(location: Location)
+    fun setNewLocation(location: LatLng)
     {
-        latLng = LatLng(location.latitude, location.longitude)
-        mMap?.addMarker(MarkerOptions().position(latLng))
-        mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
+        mMap?.addMarker(MarkerOptions().position(location))
+        mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10f))
 
-        //Toast.makeText(this.context, "Lat: "+ ll.latitude + " long: "+ ll.longitude, Toast.LENGTH_LONG).show()
+        Toast.makeText(this.context, "Lat: "+ location.latitude + " long: "+ location.longitude, Toast.LENGTH_LONG).show()
     }
 }

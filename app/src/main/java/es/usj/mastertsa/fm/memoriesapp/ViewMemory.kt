@@ -27,7 +27,7 @@ class ViewMemory : AppCompatActivity()
         val memory = MemoriesManager.instance.memories.find { it.id == id }
         title = memory?.title
         tvCategoryItem.text = memory?.category.toString()
-        tvDateItem.text = (SimpleDateFormat("dd/mm/yyyy").format(memory?.date))
+        tvDateItem.text = (SimpleDateFormat("dd/MM/yyyy").format(memory?.date))
         tvDescription.text = memory?.description
 
         (mapFragment as MapFragment).setNewLocation(memory!!.location)

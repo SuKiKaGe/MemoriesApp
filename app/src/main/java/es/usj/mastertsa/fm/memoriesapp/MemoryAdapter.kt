@@ -38,7 +38,7 @@ class MemoryAdapter(context: Context, private val dataSource: ArrayList<Memory> 
         val memory = getItem(position) as Memory
 
         titleTextView.text = memory.title
-        dateTextView.text = SimpleDateFormat("dd/mm/yyyy", Locale.getDefault()).format(memory.date)
+        dateTextView.text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(memory.date)
 
         return rowView
     }

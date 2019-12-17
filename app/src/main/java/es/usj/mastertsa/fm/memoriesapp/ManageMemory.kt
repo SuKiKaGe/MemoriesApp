@@ -23,6 +23,7 @@ import android.content.Context
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import com.google.android.gms.maps.model.LatLng
 
 
 const val ACTION = "New/Edit Memory"
@@ -35,7 +36,7 @@ class ManageMemory : AppCompatActivity(), LocationListener
 {
 
     var idToEdit: Int = 0
-    lateinit var location: Location
+    lateinit var location: LatLng
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -50,7 +51,7 @@ class ManageMemory : AppCompatActivity(), LocationListener
         when (title) {
             "New Memory" ->
             {
-                etDate.setText(SimpleDateFormat("dd/mm/yyyy", Locale.getDefault()).format(Date()))
+                etDate.setText(SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date()))
                 val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
                 if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -99,30 +100,17 @@ class ManageMemory : AppCompatActivity(), LocationListener
         }
     }
 
-    private fun getIndexByString(spinner: Spinner, string: String): Int
-    {
-        var index = 0
-
-        for (i in 0 until spinner.count)
-        {
-            if (spinner.getItemAtPosition(i).toString().equals(string, ignoreCase = true))
-            {
-                index = i
-                break
-            }
-        }
-
-        return index
-    }
-
     private fun setEditData(id: Int)
     {
         val memory = MemoriesManager.instance.memories.find { it.id == id }
 
         etTitle.setText(memory?.title)
-        spinner.setSelection(getIndexByString(spinner, memory?.category.toString()))
-        etDate.setText((SimpleDateFormat("dd/mm/yyyy").format(memory?.date)))
+        spinner.setSelection(Categories.valueOf(memory?.category.toString()).ordinal)
+        etDate.setText((SimpleDateFormat("dd/MM/yyyy").format(memory?.date)))
         etDescription.setText(memory?.description)
+
+        location = memory?.location!!
+        (mapFragment as MapFragment).setNewLocation(location)
 
     }
 
@@ -138,10 +126,9 @@ class ManageMemory : AppCompatActivity(), LocationListener
         {
             R.id.save -> {
                 val newMemory = Memory(etTitle.text.toString(), spinner.selectedItem.toString(),
-                    SimpleDateFormat("dd/mm/yyyy").parse( etDate.text.toString()),
-                    etDescription.text.toString())
+                    SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()),
+                    etDescription.text.toString(), location)
                 newMemory.id = idToEdit
-                newMemory.location = location
 
                 when (title)
                 {
@@ -193,7 +180,7 @@ class ManageMemory : AppCompatActivity(), LocationListener
 
     override fun onLocationChanged(p0: Location?)
     {
-        location = p0!!
+        location = LatLng(p0!!.latitude, p0!!.longitude)
         (mapFragment as MapFragment).setNewLocation(location)
     }
 
