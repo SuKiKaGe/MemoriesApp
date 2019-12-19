@@ -48,7 +48,7 @@ class ManageMemory : AppCompatActivity(), LocationListener
 
     var idToEdit: Int = 0
     lateinit var location: LatLng
-    lateinit var currentPhotoPath: String
+    var currentPhotoPath: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -136,7 +136,7 @@ class ManageMemory : AppCompatActivity(), LocationListener
         etDate.setText((SimpleDateFormat("dd/MM/yyyy").format(memory?.date)))
         etDescription.setText(memory?.description)
 
-        if (isNullOrEmpty(memory?.photoPath))
+        if (memory?.photoPath.isNullOrEmpty())
         {
             imgBtnPhoto.setImageResource(R.drawable.photo_not_available)
             imgBtnPhoto.isClickable = false
@@ -151,7 +151,7 @@ class ManageMemory : AppCompatActivity(), LocationListener
             }
         }
 
-        if (isNullOrEmpty(memory?.videoPath))
+        if (memory?.videoPath.isNullOrEmpty())
         {
             imgBtnVideo.setImageResource(R.drawable.video_not_available)
             imgBtnVideo.isClickable = false
@@ -161,7 +161,7 @@ class ManageMemory : AppCompatActivity(), LocationListener
             imgBtnVideo.setImageResource(R.drawable.video_available)
         }
 
-        if (isNullOrEmpty(memory?.audioPath))
+        if (memory?.audioPath.isNullOrEmpty())
         {
             imgBtnAudio.setImageResource(R.drawable.audio_not_available)
             imgBtnAudio.isClickable = false
@@ -255,12 +255,6 @@ class ManageMemory : AppCompatActivity(), LocationListener
     override fun onProviderEnabled(p0: String?) {}
     override fun onProviderDisabled(p0: String?) {}
 
-    private fun isNullOrEmpty(string : String?) : Boolean
-    {
-        if (string != null && string.isNotEmpty()) { return false }
-
-        return true
-    }
 
     @Throws(IOException::class)
     private fun createImageFile(): File {

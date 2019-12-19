@@ -20,7 +20,7 @@ class Memory
 
     var location : LatLng
 
-    constructor (title : String, category : String, date : Date = Date(), description : String, location: LatLng, photoPath : String)
+    constructor (title : String, category : String, date : Date = Date(), description : String, location: LatLng, photoPath : String?)
     {
         this.title = title
         this.category = Categories.valueOf(category)

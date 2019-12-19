@@ -24,15 +24,29 @@ class MainActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        MemoriesManager.instance.addMemory(Memory("Recuerdo 1", "Bad",
-            SimpleDateFormat("dd/mm/yyyy").parse("01/01/2011"),
-            "Descripción de recuerdo 1", LatLng(130.0, 150.0), ""))
-        MemoriesManager.instance.addMemory(Memory("Recuerdo 2", "BlackList",
-            SimpleDateFormat("dd/mm/yyyy").parse("02/02/2012"),
-            "Descripción de recuerdo 2", LatLng(50.0, 20.0), ""))
-        MemoriesManager.instance.addMemory(Memory("Recuerdo 3", "Travel",
-            SimpleDateFormat("dd/mm/yyyy").parse("03/03/2013"),
-            "Descripción de recuerdo 3", LatLng(200.0, 180.0), ""))
+        if(MemoriesManager.instance.memories.size <= 0) {
+            MemoriesManager.instance.addMemory(
+                Memory(
+                    "Recuerdo 1", "Bad",
+                    SimpleDateFormat("dd/mm/yyyy").parse("01/01/2011"),
+                    "Descripción de recuerdo 1", LatLng(130.0, 150.0), ""
+                )
+            )
+            MemoriesManager.instance.addMemory(
+                Memory(
+                    "Recuerdo 2", "BlackList",
+                    SimpleDateFormat("dd/mm/yyyy").parse("02/02/2012"),
+                    "Descripción de recuerdo 2", LatLng(50.0, 20.0), ""
+                )
+            )
+            MemoriesManager.instance.addMemory(
+                Memory(
+                    "Recuerdo 3", "Travel",
+                    SimpleDateFormat("dd/mm/yyyy").parse("03/03/2013"),
+                    "Descripción de recuerdo 3", LatLng(200.0, 180.0), ""
+                )
+            )
+        }
 
         listMemories.adapter = MemoryAdapter(this)
 
@@ -60,6 +74,11 @@ class MainActivity : AppCompatActivity()
                 var intent = Intent(this, ManageMemory::class.java)
                 intent.putExtra(ACTION, "New Memory")
                 startActivityForResult(intent, NEW_MEMORY)
+            }
+            R.id.map ->
+            {
+                var intent = Intent(this, MapActivity::class.java)
+                startActivity(intent)
             }
             else -> Toast.makeText(this, "Something was wrong", Toast.LENGTH_SHORT).show()
         }

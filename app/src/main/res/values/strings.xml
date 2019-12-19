@@ -17,6 +17,8 @@
     <string name="editmemory">editMemory</string>
     <string name="category_icon">category icon</string>
     <string name="tvCategory">Category</string>
+    <string name="map">map</string>
+    <string name="list">list</string>
     <string-array name="category_array">
         <item>Good</item>
         <item>Bad</item>
