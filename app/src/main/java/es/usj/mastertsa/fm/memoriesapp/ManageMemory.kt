@@ -23,7 +23,17 @@ import android.content.Context
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.os.Environment
+import androidx.core.content.FileProvider
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.android.synthetic.main.activity_create_memory.btnAudio
+import kotlinx.android.synthetic.main.activity_create_memory.btnPhoto
+import kotlinx.android.synthetic.main.activity_create_memory.btnVideo
+import kotlinx.android.synthetic.main.activity_create_memory.imgBtnAudio
+import kotlinx.android.synthetic.main.activity_create_memory.imgBtnPhoto
+import kotlinx.android.synthetic.main.activity_create_memory.mapFragment
+import java.io.File
+import java.io.IOException
 
 
 const val ACTION = "New/Edit Memory"
@@ -31,12 +41,14 @@ const val ID = "Memory Id"
 const val REQUEST_IMAGE_CAPTURE = 1
 const val REQUEST_VIDEO_CAPTURE = 2
 const val REQUEST_AUDIO_CAPTURE = 3
+const val VIEW_MEMORY_PHOTO = 4
 
 class ManageMemory : AppCompatActivity(), LocationListener
 {
 
     var idToEdit: Int = 0
     lateinit var location: LatLng
+    lateinit var currentPhotoPath: String
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -78,7 +90,22 @@ class ManageMemory : AppCompatActivity(), LocationListener
         btnPhoto.setOnClickListener {
             Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
                     takePictureIntent -> takePictureIntent.resolveActivity(packageManager)?.also {
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                    val photoFile: File? = try {
+                        createImageFile()
+                    } catch (ex: IOException) {
+                        // Error occurred while creating the File ...
+                        null
+                    }
+                    // Continue only if the File was successfully created
+                    photoFile?.also {
+                        val photoURI: Uri = FileProvider.getUriForFile(
+                            this,
+                            "es.usj.mastertsa.fm.memoriesapp.fileprovider",
+                            it
+                        )
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                    }
                 }
             }
         }
@@ -109,6 +136,41 @@ class ManageMemory : AppCompatActivity(), LocationListener
         etDate.setText((SimpleDateFormat("dd/MM/yyyy").format(memory?.date)))
         etDescription.setText(memory?.description)
 
+        if (isNullOrEmpty(memory?.photoPath))
+        {
+            imgBtnPhoto.setImageResource(R.drawable.photo_not_available)
+            imgBtnPhoto.isClickable = false
+        }
+        else
+        {
+            imgBtnPhoto.setImageResource(R.drawable.photo_available)
+            imgBtnPhoto.setOnClickListener {
+                var intent = Intent(this, ViewMemoryPhoto::class.java)
+                intent.putExtra(CURRENT_PHOTO_PATH, currentPhotoPath)
+                startActivityForResult(intent, VIEW_MEMORY_PHOTO)
+            }
+        }
+
+        if (isNullOrEmpty(memory?.videoPath))
+        {
+            imgBtnVideo.setImageResource(R.drawable.video_not_available)
+            imgBtnVideo.isClickable = false
+        }
+        else
+        {
+            imgBtnVideo.setImageResource(R.drawable.video_available)
+        }
+
+        if (isNullOrEmpty(memory?.audioPath))
+        {
+            imgBtnAudio.setImageResource(R.drawable.audio_not_available)
+            imgBtnAudio.isClickable = false
+        }
+        else
+        {
+            imgBtnAudio.setImageResource(R.drawable.audio_available)
+        }
+
         location = memory?.location!!
         (mapFragment as MapFragment).setNewLocation(location)
 
@@ -127,7 +189,7 @@ class ManageMemory : AppCompatActivity(), LocationListener
             R.id.save -> {
                 val newMemory = Memory(etTitle.text.toString(), spinner.selectedItem.toString(),
                     SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()),
-                    etDescription.text.toString(), location)
+                    etDescription.text.toString(), location, currentPhotoPath)
                 newMemory.id = idToEdit
 
                 when (title)
@@ -160,13 +222,18 @@ class ManageMemory : AppCompatActivity(), LocationListener
     {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
         {
-            val imageBitmap = data?.extras?.get("data") as Bitmap
-            imgBtnPhoto.setImageBitmap(imageBitmap)
+            idToEdit = intent.getIntExtra(ID, 0)
+            val memory = MemoriesManager.instance.memories.find { it.id == idToEdit }
+            memory?.photoPath = currentPhotoPath
+            setEditData(idToEdit)
+            //galleryAddPic()
+            //val imageBitmap = data?.extras?.get("data") as Bitmap
+            //imgBtnPhoto.setImageBitmap(imageBitmap)
         }
         else if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK)
         {
             val videoUri: Uri = intent.data!!
-            vvBtnVideo.setVideoURI(videoUri)
+            //vvBtnVideo.setVideoURI(videoUri)
             //val imageBitmap = data?.extras?.get("data") as Bitmap
             //imgBtnVideo.setImageBitmap(imageBitmap)
         }
@@ -187,4 +254,35 @@ class ManageMemory : AppCompatActivity(), LocationListener
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
     override fun onProviderEnabled(p0: String?) {}
     override fun onProviderDisabled(p0: String?) {}
+
+    private fun isNullOrEmpty(string : String?) : Boolean
+    {
+        if (string != null && string.isNotEmpty()) { return false }
+
+        return true
+    }
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
+        }
+    }
+
+    private fun galleryAddPic()
+    {
+        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
+            val f = File(currentPhotoPath)
+            mediaScanIntent.data = Uri.fromFile(f)
+            sendBroadcast(mediaScanIntent)
+        }
+    }
 }

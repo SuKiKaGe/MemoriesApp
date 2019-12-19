@@ -147,12 +147,13 @@
                     android:contentDescription="@string/photo_image_content_description"
                     tools:srcCompat="@tools:sample/avatars" />
 
-                <VideoView
-                    android:id="@+id/vvBtnVideo"
-                    android:layout_width="167dp"
+                <ImageButton
+                    android:id="@+id/imgBtnVideo"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:contentDescription="@string/video_image_content_description" />
+                    android:contentDescription="@string/video_image_content_description"
+                    tools:srcCompat="@tools:sample/avatars" />
 
                 <ImageButton
                     android:id="@+id/imgBtnAudio"

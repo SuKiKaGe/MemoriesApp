@@ -14,18 +14,22 @@ class Memory
     var date : Date
     var description : String
 
-    lateinit var photoPath : String
-    lateinit var videoPath : String
-    lateinit var audioPath : String
+    var photoPath : String?
+    var videoPath : String?
+    var audioPath : String?
 
     var location : LatLng
 
-    constructor (title : String, category : String, date : Date = Date(), description : String, location: LatLng)
+    constructor (title : String, category : String, date : Date = Date(), description : String, location: LatLng, photoPath : String)
     {
         this.title = title
         this.category = Categories.valueOf(category)
         this.date = date
         this.description = description
         this.location = location
+        this.photoPath = photoPath
+        this.videoPath = null
+        this.audioPath = null
+
     }
 }

@@ -30,6 +30,40 @@ class ViewMemory : AppCompatActivity()
         tvDateItem.text = (SimpleDateFormat("dd/MM/yyyy").format(memory?.date))
         tvDescription.text = memory?.description
 
+        btnPhoto.isClickable = false
+        btnVideo.isClickable = false
+        btnAudio.isClickable = false
+
+        if (isNullOrEmpty(memory?.photoPath))
+        {
+            imgBtnPhoto.setImageResource(R.drawable.photo_not_available)
+            imgBtnPhoto.isClickable = false
+        }
+        else
+        {
+            imgBtnPhoto.setImageResource(R.drawable.photo_available)
+        }
+
+        if (isNullOrEmpty(memory?.videoPath))
+        {
+            imgBtnVideo.setImageResource(R.drawable.video_not_available)
+            imgBtnVideo.isClickable = false
+        }
+        else
+        {
+            imgBtnVideo.setImageResource(R.drawable.video_available)
+        }
+
+        if (isNullOrEmpty(memory?.audioPath))
+        {
+            imgBtnAudio.setImageResource(R.drawable.audio_not_available)
+            imgBtnAudio.isClickable = false
+        }
+        else
+        {
+            imgBtnAudio.setImageResource(R.drawable.audio_available)
+        }
+
         (mapFragment as MapFragment).setNewLocation(memory!!.location)
     }
 
@@ -74,5 +108,12 @@ class ViewMemory : AppCompatActivity()
     {
         super.onBackPressed()
         setResult(UNMODIFIED)
+    }
+
+    private fun isNullOrEmpty(string : String?) : Boolean
+    {
+        if (string != null && string.isNotEmpty()) { return false }
+
+        return true
     }
 }
