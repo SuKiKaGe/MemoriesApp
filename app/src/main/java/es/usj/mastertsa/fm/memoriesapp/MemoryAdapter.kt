@@ -12,7 +12,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class MemoryAdapter(context: Context, private val dataSource: ArrayList<Memory> = MemoriesManager.instance.memories) : BaseAdapter()
+class MemoryAdapter(context: Context, private val dataSource: ArrayList<Memory>) : BaseAdapter()
 {
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 

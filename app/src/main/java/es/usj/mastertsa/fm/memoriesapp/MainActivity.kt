@@ -5,8 +5,12 @@ import android.location.Location
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.get
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
@@ -16,6 +20,15 @@ const val NEW_MEMORY = 10
 const val UPDATE_MEMORY = 11
 const val VIEW_MEMORY = 12
 const val DELETE_MEMORY = 13
+
+enum class Order
+{
+    Date,
+    Name_A_Z,
+    Name_Z_A,
+    Category_A_Z,
+    Category_Z_A
+}
 
 class MainActivity : AppCompatActivity()
 {
@@ -45,7 +58,19 @@ class MainActivity : AppCompatActivity()
             )
         }
 
-        listMemories.adapter = MemoryAdapter(this)
+        spOrder.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, Order.values())
+        spOrder.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                listMemories.adapter = MemoryAdapter(view!!.context, MemoriesManager.instance.getMemories(Order.values()[position]))
+            }
+
+        }
+
+        listMemories.adapter = MemoryAdapter(this, MemoriesManager.instance.getMemories())
 
         listMemories.setOnItemClickListener { parent, _, position, _ ->
             val item = MemoriesManager.instance.memories.get(position)// The item that was clicked
@@ -90,7 +115,7 @@ class MainActivity : AppCompatActivity()
         {
             NEW_MEMORY, UPDATE_MEMORY, VIEW_MEMORY, DELETE_MEMORY ->
             {
-                listMemories.adapter = MemoryAdapter(this)
+                listMemories.adapter = MemoryAdapter(this, MemoriesManager.instance.getMemories(spOrder.selectedItem as Order))
             }
         }
 

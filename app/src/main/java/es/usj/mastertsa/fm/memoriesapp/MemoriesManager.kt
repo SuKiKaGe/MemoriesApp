@@ -35,4 +35,26 @@ class MemoriesManager private constructor()
         val position = memories.indexOf(memories.find { it.id == memory.id })
         memories[position] = memory
     }
+
+    fun getMemories(order: Order = Order.Date): ArrayList<Memory>
+    {
+        var ordedMemories: List<Memory> = when(order)
+        {
+            Order.Date -> memories.sortedBy { it.date }
+            Order.Name_A_Z -> memories.sortedBy { it.title }
+            Order.Name_Z_A ->
+            {
+                val temp = memories.sortedBy { it.title }
+                temp.reversed()
+            }
+            Order.Category_A_Z -> {memories.sortedBy { it.category }}
+            Order.Category_Z_A ->
+            {
+                val temp = memories.sortedBy { it.category }
+                temp.reversed()
+            }
+        }
+
+        return ArrayList(ordedMemories)
+    }
 }
