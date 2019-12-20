@@ -6,12 +6,17 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_view_memory.*
 import java.text.SimpleDateFormat
 
-class ViewMemory : AppCompatActivity()
+class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
 {
     var id: Int = 0
+    lateinit var location: LatLng
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +39,7 @@ class ViewMemory : AppCompatActivity()
         btnVideo.isClickable = false
         btnAudio.isClickable = false
 
-        if (isNullOrEmpty(memory?.photoPath))
+        if (memory?.photoPath.isNullOrEmpty())
         {
             imgBtnPhoto.setImageResource(R.drawable.photo_not_available)
             imgBtnPhoto.isClickable = false
@@ -44,7 +49,7 @@ class ViewMemory : AppCompatActivity()
             imgBtnPhoto.setImageResource(R.drawable.photo_available)
         }
 
-        if (isNullOrEmpty(memory?.videoPath))
+        if (memory?.videoPath.isNullOrEmpty())
         {
             imgBtnVideo.setImageResource(R.drawable.video_not_available)
             imgBtnVideo.isClickable = false
@@ -54,7 +59,7 @@ class ViewMemory : AppCompatActivity()
             imgBtnVideo.setImageResource(R.drawable.video_available)
         }
 
-        if (isNullOrEmpty(memory?.audioPath))
+        if (memory?.audioPath.isNullOrEmpty())
         {
             imgBtnAudio.setImageResource(R.drawable.audio_not_available)
             imgBtnAudio.isClickable = false
@@ -64,7 +69,8 @@ class ViewMemory : AppCompatActivity()
             imgBtnAudio.setImageResource(R.drawable.audio_available)
         }
 
-        (mapFragment as MapFragment).setNewLocation(memory!!.location)
+        location = memory!!.location
+        //(mapFragment as MapFragment).setNewLocation(memory!!.location)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean
@@ -110,10 +116,8 @@ class ViewMemory : AppCompatActivity()
         setResult(UNMODIFIED)
     }
 
-    private fun isNullOrEmpty(string : String?) : Boolean
-    {
-        if (string != null && string.isNotEmpty()) { return false }
-
-        return true
+    override fun locateMap(map: GoogleMap?) {
+        map?.addMarker(MarkerOptions().position(location))
+        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10f))
     }
 }

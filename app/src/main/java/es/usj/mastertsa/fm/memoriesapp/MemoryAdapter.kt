@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
+
 class MemoryAdapter(context: Context, private val dataSource: ArrayList<Memory> = MemoriesManager.instance.memories) : BaseAdapter()
 {
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -39,6 +40,10 @@ class MemoryAdapter(context: Context, private val dataSource: ArrayList<Memory> 
 
         titleTextView.text = memory.title
         dateTextView.text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(memory.date)
+
+
+        val resourceId = inflater.context.resources.getIdentifier(memory.category.name.toLowerCase(), "drawable", inflater.context.packageName)
+        categoryImageView.setImageResource(resourceId)
 
         return rowView
     }

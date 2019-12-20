@@ -25,7 +25,10 @@ import androidx.core.app.ActivityCompat
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.os.Environment
 import androidx.core.content.FileProvider
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_create_memory.btnAudio
 import kotlinx.android.synthetic.main.activity_create_memory.btnPhoto
 import kotlinx.android.synthetic.main.activity_create_memory.btnVideo
@@ -43,11 +46,11 @@ const val REQUEST_VIDEO_CAPTURE = 2
 const val REQUEST_AUDIO_CAPTURE = 3
 const val VIEW_MEMORY_PHOTO = 4
 
-class ManageMemory : AppCompatActivity(), LocationListener
+class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInterface
 {
 
     var idToEdit: Int = 0
-    lateinit var location: LatLng
+    var location: LatLng = LatLng(0.0,0.0)
     var currentPhotoPath: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -172,8 +175,6 @@ class ManageMemory : AppCompatActivity(), LocationListener
         }
 
         location = memory?.location!!
-        (mapFragment as MapFragment).setNewLocation(location)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -188,8 +189,8 @@ class ManageMemory : AppCompatActivity(), LocationListener
         {
             R.id.save -> {
                 val newMemory = Memory(etTitle.text.toString(), spinner.selectedItem.toString(),
-                    SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()),
-                    etDescription.text.toString(), location, currentPhotoPath)
+                    etDescription.text.toString(), location, currentPhotoPath,
+                    SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()))
                 newMemory.id = idToEdit
 
                 when (title)
@@ -242,6 +243,13 @@ class ManageMemory : AppCompatActivity(), LocationListener
                 val audioUri : Uri = intent.data!!
                 // make use of this MediaStore uri
                 // e.g. store it somewhere
+        }
+    }
+
+    override fun locateMap(map: GoogleMap?) {
+        if(location != LatLng(0.0, 0.0)) {
+            map?.addMarker(MarkerOptions().position(location))
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10f))
         }
     }
 

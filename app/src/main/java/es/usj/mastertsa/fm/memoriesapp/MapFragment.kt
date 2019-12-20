@@ -24,23 +24,30 @@ import androidx.core.content.PermissionChecker.checkSelfPermission
 
 class MapFragment : SupportMapFragment(), OnMapReadyCallback {
 
+    interface MapInterface
+    {
+        fun locateMap(map: GoogleMap?)
+    }
+
     private var mMap: GoogleMap? = null
-    private var latLng: LatLng = LatLng(0.0,0.0)
+    lateinit var mapInterface : MapInterface
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
         getMapAsync(this)
+        mapInterface = activity as MapInterface
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onMapReady(p0: GoogleMap?)
     {
         mMap = p0
+        mapInterface.locateMap(mMap)
     }
 
-    fun setNewLocation(location: LatLng)
+    fun setNewLocation(location: LatLng, addMark: Boolean = true)
     {
-        mMap?.addMarker(MarkerOptions().position(location))
+        if(addMark) mMap?.addMarker(MarkerOptions().position(location))
         mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10f))
 
         Toast.makeText(this.context, "Lat: "+ location.latitude + " long: "+ location.longitude, Toast.LENGTH_LONG).show()

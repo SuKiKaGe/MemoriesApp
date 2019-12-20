@@ -8,21 +8,35 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_create_memory.*
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MapActivity : AppCompatActivity(), LocationListener {
+class MapActivity : AppCompatActivity(), LocationListener, MapFragment.MapInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
     }
 
+    override fun locateMap(map: GoogleMap?)
+    {
+        for (memory in MemoriesManager.instance.memories)
+        {
+            map?.addMarker(MarkerOptions().position(memory.location))
+        }
+
+        //map?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10f))
+        map?.isMyLocationEnabled = true
+    }
+
     override fun onLocationChanged(p0: Location?)
     {
         val location = LatLng(p0!!.latitude, p0!!.longitude)
-        (mapFragment as MapFragment).setNewLocation(location)
+        (mapFragment as MapFragment).setNewLocation(location, false)
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
