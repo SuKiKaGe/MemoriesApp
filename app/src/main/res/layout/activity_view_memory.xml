@@ -77,13 +77,6 @@
                     android:inputType="date"
                     android:textAlignment="textStart" />
 
-                <ImageView
-                    android:id="@+id/imgReminder"
-                    android:layout_width="18dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:contentDescription="@string/image_reminder_content_description"
-                    tools:srcCompat="@tools:sample/avatars" />
             </LinearLayout>
 
             <TextView
@@ -105,18 +98,20 @@
 
                 <Button
                     android:id="@+id/btnPhoto"
+                    style="?android:attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
+                    android:clickable="false"
                     android:text="@string/button_photo_text" />
 
                 <Button
                     android:id="@+id/btnVideo"
+                    style="?android:attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
+                    android:clickable="false"
                     android:text="@string/button_video_text" />
 
                 <Button
@@ -125,6 +120,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:clickable="false"
                     android:text="@string/button_audio_text" />
             </LinearLayout>
 
@@ -138,24 +134,30 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:clickable="false"
                     android:contentDescription="@string/photo_image_content_description"
-                    tools:srcCompat="@tools:sample/avatars" />
+                    android:src="@drawable/photo_not_available"
+                    tools:srcCompat="@drawable/photo_not_available" />
 
                 <ImageButton
                     android:id="@+id/imgBtnVideo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:clickable="false"
                     android:contentDescription="@string/video_image_content_description"
-                    tools:srcCompat="@tools:sample/avatars" />
+                    android:src="@drawable/video_not_available"
+                    tools:srcCompat="@drawable/video_not_available" />
 
                 <ImageButton
                     android:id="@+id/imgBtnAudio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:clickable="false"
                     android:contentDescription="@string/audio_image_content_description"
-                    tools:srcCompat="@tools:sample/avatars" />
+                    android:src="@drawable/audio_not_available"
+                    tools:srcCompat="@drawable/audio_not_available" />
             </LinearLayout>
 
         </LinearLayout>

@@ -2,6 +2,8 @@ package es.usj.mastertsa.fm.memoriesapp
 
 import android.content.Intent
 import android.location.Location
+import android.location.LocationManager
+import android.location.LocationProvider
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -11,6 +13,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.get
+import com.google.android.gms.maps.LocationSource
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
@@ -59,21 +62,27 @@ class MainActivity : AppCompatActivity()
         }
 
         spOrder.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, Order.values())
+        spOrder.setSelection(MemoriesManager.instance.orderSelected.ordinal)
         spOrder.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                listMemories.adapter = MemoryAdapter(view!!.context, MemoriesManager.instance.getMemories(Order.values()[position]))
+                setList(spOrder.selectedItem as Order)
             }
 
         }
 
-        listMemories.adapter = MemoryAdapter(this, MemoriesManager.instance.getMemories())
+        setList(null)
+    }
+
+    fun setList(order: Order?)
+    {
+        listMemories.adapter = MemoryAdapter(this, MemoriesManager.instance.getMemories(order))
 
         listMemories.setOnItemClickListener { parent, _, position, _ ->
-            val item = MemoriesManager.instance.memories.get(position)// The item that was clicked
+            val item = MemoriesManager.instance.getMemories(order).get(position)// The item that was clicked
 
             var intent = Intent(this, ViewMemory::class.java)
             intent.putExtra(ID, item?.id)
@@ -110,12 +119,11 @@ class MainActivity : AppCompatActivity()
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
     {
-
         when(requestCode)
         {
             NEW_MEMORY, UPDATE_MEMORY, VIEW_MEMORY, DELETE_MEMORY ->
             {
-                listMemories.adapter = MemoryAdapter(this, MemoriesManager.instance.getMemories(spOrder.selectedItem as Order))
+                setList(null)
             }
         }
 

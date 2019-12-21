@@ -14,6 +14,8 @@ class MemoriesManager private constructor()
 
     var memories: ArrayList<Memory> = ArrayList()
     var maxId: Int = 1
+    lateinit var tempMemory: Memory
+    var orderSelected: Order = Order.Date
 
     fun addMemory(newMemory: Memory)
     {
@@ -36,9 +38,17 @@ class MemoriesManager private constructor()
         memories[position] = memory
     }
 
-    fun getMemories(order: Order = Order.Date): ArrayList<Memory>
+    fun findMemory(id: Int): Memory?
     {
-        var ordedMemories: List<Memory> = when(order)
+        if(id == 0) return tempMemory
+        return memories.find { it.id == id }
+    }
+
+    fun getMemories(order: Order?): ArrayList<Memory>
+    {
+        if(order != null) orderSelected = order
+
+        var ordedMemories: List<Memory> = when(orderSelected)
         {
             Order.Date -> memories.sortedBy { it.date }
             Order.Name_A_Z -> memories.sortedBy { it.title }

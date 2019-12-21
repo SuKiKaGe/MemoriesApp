@@ -8,12 +8,10 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_create_memory.*
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MapActivity : AppCompatActivity(), LocationListener, MapFragment.MapInterface {
 

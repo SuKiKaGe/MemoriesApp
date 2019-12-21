@@ -60,7 +60,6 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
 
         title = intent.getStringExtra(ACTION)
 
-        val spinner: Spinner = findViewById(R.id.spinner)
         spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, Categories.values())
 
         when (title) {
@@ -91,26 +90,7 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         }
 
         btnPhoto.setOnClickListener {
-            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
-                    takePictureIntent -> takePictureIntent.resolveActivity(packageManager)?.also {
-                    val photoFile: File? = try {
-                        createImageFile()
-                    } catch (ex: IOException) {
-                        // Error occurred while creating the File ...
-                        null
-                    }
-                    // Continue only if the File was successfully created
-                    photoFile?.also {
-                        val photoURI: Uri = FileProvider.getUriForFile(
-                            this,
-                            "es.usj.mastertsa.fm.memoriesapp.fileprovider",
-                            it
-                        )
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-                    }
-                }
-            }
+            takePhoto()
         }
 
         btnVideo.setOnClickListener {
@@ -130,46 +110,63 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         }
     }
 
+    private fun takePhoto()
+    {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            takePictureIntent.resolveActivity(packageManager)?.also {
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    // Error occurred while creating the File ...
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        this,
+                        "es.usj.mastertsa.fm.memoriesapp.fileprovider",
+                        it
+                    )
+                    MemoriesManager.instance.tempMemory = Memory(etTitle.text.toString(), spinner.selectedItem.toString(),
+                        etDescription.text.toString(), location, currentPhotoPath,
+                        SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()))
+                    MemoriesManager.instance.tempMemory.id = idToEdit
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                }
+            }
+        }
+    }
+
     private fun setEditData(id: Int)
     {
-        val memory = MemoriesManager.instance.memories.find { it.id == id }
+        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, Categories.values())
+
+        val memory = MemoriesManager.instance.findMemory(id)
 
         etTitle.setText(memory?.title)
         spinner.setSelection(Categories.valueOf(memory?.category.toString()).ordinal)
         etDate.setText((SimpleDateFormat("dd/MM/yyyy").format(memory?.date)))
         etDescription.setText(memory?.description)
 
-        if (memory?.photoPath.isNullOrEmpty())
-        {
-            imgBtnPhoto.setImageResource(R.drawable.photo_not_available)
-            imgBtnPhoto.isClickable = false
-        }
-        else
+        currentPhotoPath = memory?.photoPath
+        if (!currentPhotoPath.isNullOrEmpty())
         {
             imgBtnPhoto.setImageResource(R.drawable.photo_available)
             imgBtnPhoto.setOnClickListener {
-                var intent = Intent(this, ViewMemoryPhoto::class.java)
+                val intent = Intent(this, ViewMemoryPhoto::class.java)
                 intent.putExtra(CURRENT_PHOTO_PATH, currentPhotoPath)
+                intent.putExtra(MULTIMEDIA, MULTIMEDIA_PHOTO)
                 startActivityForResult(intent, VIEW_MEMORY_PHOTO)
             }
         }
 
-        if (memory?.videoPath.isNullOrEmpty())
-        {
-            imgBtnVideo.setImageResource(R.drawable.video_not_available)
-            imgBtnVideo.isClickable = false
-        }
-        else
+        if (!memory?.videoPath.isNullOrEmpty())
         {
             imgBtnVideo.setImageResource(R.drawable.video_available)
         }
 
-        if (memory?.audioPath.isNullOrEmpty())
-        {
-            imgBtnAudio.setImageResource(R.drawable.audio_not_available)
-            imgBtnAudio.isClickable = false
-        }
-        else
+        if (!memory?.audioPath.isNullOrEmpty())
         {
             imgBtnAudio.setImageResource(R.drawable.audio_available)
         }
@@ -224,8 +221,6 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
         {
             idToEdit = intent.getIntExtra(ID, 0)
-            val memory = MemoriesManager.instance.memories.find { it.id == idToEdit }
-            memory?.photoPath = currentPhotoPath
             setEditData(idToEdit)
             //galleryAddPic()
             //val imageBitmap = data?.extras?.get("data") as Bitmap

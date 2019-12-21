@@ -10,7 +10,14 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.android.synthetic.main.activity_create_memory.*
 import kotlinx.android.synthetic.main.activity_view_memory.*
+import kotlinx.android.synthetic.main.activity_view_memory.btnAudio
+import kotlinx.android.synthetic.main.activity_view_memory.btnPhoto
+import kotlinx.android.synthetic.main.activity_view_memory.btnVideo
+import kotlinx.android.synthetic.main.activity_view_memory.imgBtnAudio
+import kotlinx.android.synthetic.main.activity_view_memory.imgBtnPhoto
+import kotlinx.android.synthetic.main.activity_view_memory.imgBtnVideo
 import java.text.SimpleDateFormat
 
 class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
@@ -35,42 +42,28 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
         tvDateItem.text = (SimpleDateFormat("dd/MM/yyyy").format(memory?.date))
         tvDescription.text = memory?.description
 
-        btnPhoto.isClickable = false
-        btnVideo.isClickable = false
-        btnAudio.isClickable = false
-
-        if (memory?.photoPath.isNullOrEmpty())
-        {
-            imgBtnPhoto.setImageResource(R.drawable.photo_not_available)
-            imgBtnPhoto.isClickable = false
-        }
-        else
+        if (!memory?.photoPath.isNullOrEmpty())
         {
             imgBtnPhoto.setImageResource(R.drawable.photo_available)
+            imgBtnPhoto.setOnClickListener {
+                val intent = Intent(this, ViewMemoryPhoto::class.java)
+                intent.putExtra(CURRENT_PHOTO_PATH, memory?.photoPath)
+                intent.putExtra(MULTIMEDIA, MULTIMEDIA_PHOTO)
+                startActivityForResult(intent, VIEW_MEMORY_PHOTO)
+            }
         }
 
-        if (memory?.videoPath.isNullOrEmpty())
-        {
-            imgBtnVideo.setImageResource(R.drawable.video_not_available)
-            imgBtnVideo.isClickable = false
-        }
-        else
+        if (!memory?.videoPath.isNullOrEmpty())
         {
             imgBtnVideo.setImageResource(R.drawable.video_available)
         }
 
-        if (memory?.audioPath.isNullOrEmpty())
-        {
-            imgBtnAudio.setImageResource(R.drawable.audio_not_available)
-            imgBtnAudio.isClickable = false
-        }
-        else
+        if (!memory?.audioPath.isNullOrEmpty())
         {
             imgBtnAudio.setImageResource(R.drawable.audio_available)
         }
 
         location = memory!!.location
-        //(mapFragment as MapFragment).setNewLocation(memory!!.location)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean
