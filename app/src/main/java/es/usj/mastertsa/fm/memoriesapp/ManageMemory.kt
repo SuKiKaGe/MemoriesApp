@@ -1,5 +1,6 @@
 package es.usj.mastertsa.fm.memoriesapp
 
+import android.Manifest
 import android.content.Intent
 import android.graphics.Bitmap
 import android.location.Location
@@ -24,6 +25,7 @@ import android.os.Looper
 import androidx.core.app.ActivityCompat
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.os.Environment
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -51,15 +53,20 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
 
     var idToEdit: Int = 0
     var location: LatLng = LatLng(0.0,0.0)
+
     var currentPhotoPath: String? = null
+    var currentVideoPath: String? = null
+
+    var permissionGranted: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_memory)
 
-        title = intent.getStringExtra(ACTION)
+        askForPermission()
 
+        title = intent.getStringExtra(ACTION)
         spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, Categories.values())
 
         when (title) {
@@ -89,17 +96,8 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
             }
         }
 
-        btnPhoto.setOnClickListener {
-            takePhoto()
-        }
-
-        btnVideo.setOnClickListener {
-            Intent(MediaStore.ACTION_VIDEO_CAPTURE).also {
-                    takeVideoIntent -> takeVideoIntent.resolveActivity(packageManager)?.also {
-                    startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
-                }
-            }
-        }
+        btnPhoto.setOnClickListener { takePhoto()  }
+        btnVideo.setOnClickListener { recordVideo() }
 
         btnAudio.setOnClickListener {
             Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION).also {
@@ -127,15 +125,52 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
                         "es.usj.mastertsa.fm.memoriesapp.fileprovider",
                         it
                     )
-                    MemoriesManager.instance.tempMemory = Memory(etTitle.text.toString(), spinner.selectedItem.toString(),
-                        etDescription.text.toString(), location, currentPhotoPath,
-                        SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()))
-                    MemoriesManager.instance.tempMemory.id = idToEdit
+                    saveTemp()
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
                 }
             }
         }
+    }
+
+    private fun recordVideo()
+    {
+        Intent(MediaStore.ACTION_VIDEO_CAPTURE).also { takeVideoIntent ->
+            takeVideoIntent.resolveActivity(packageManager)?.also {
+                val videoFile: File? = try {
+                    File.createTempFile(
+                        "MP4_${SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())}_", /* prefix */
+                        ".mp4", /* suffix */
+                        getExternalFilesDir(Environment.DIRECTORY_PICTURES) /* directory */
+                    ).apply {
+                        // Save a file: path for use with ACTION_VIEW intents
+                        currentVideoPath = absolutePath
+                    }
+                } catch (ex: IOException) {
+                    // Error occurred while creating the File ...
+                    null
+                }
+                // Continue only if the File was successfully created
+                videoFile?.also {
+                    val videoURI: Uri = FileProvider.getUriForFile(
+                        this,
+                        "es.usj.mastertsa.fm.memoriesapp.fileprovider",
+                        it
+                    )
+                    saveTemp()
+                    takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoURI)
+                    startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
+                }
+            }
+        }
+    }
+
+    fun saveTemp()
+    {
+        MemoriesManager.instance.tempMemory = Memory(etTitle.text.toString(), spinner.selectedItem.toString(),
+            etDescription.text.toString(), location, currentPhotoPath, currentVideoPath,
+            SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()))
+        MemoriesManager.instance.tempMemory.id = idToEdit
     }
 
     private fun setEditData(id: Int)
@@ -155,7 +190,7 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
             imgBtnPhoto.setImageResource(R.drawable.photo_available)
             imgBtnPhoto.setOnClickListener {
                 val intent = Intent(this, ViewMemoryPhoto::class.java)
-                intent.putExtra(CURRENT_PHOTO_PATH, currentPhotoPath)
+                intent.putExtra(CURRENT_MULTIMEDIA_PATH, currentPhotoPath)
                 intent.putExtra(MULTIMEDIA, MULTIMEDIA_PHOTO)
                 startActivityForResult(intent, VIEW_MEMORY_PHOTO)
             }
@@ -164,6 +199,12 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         if (!memory?.videoPath.isNullOrEmpty())
         {
             imgBtnVideo.setImageResource(R.drawable.video_available)
+            imgBtnVideo.setOnClickListener {
+                val intent = Intent(this, ViewMemoryPhoto::class.java)
+                intent.putExtra(CURRENT_MULTIMEDIA_PATH, currentVideoPath)
+                intent.putExtra(MULTIMEDIA, MULTIMEDIA_VIDEO)
+                startActivityForResult(intent, VIEW_MEMORY_PHOTO)
+            }
         }
 
         if (!memory?.audioPath.isNullOrEmpty())
@@ -186,7 +227,7 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         {
             R.id.save -> {
                 val newMemory = Memory(etTitle.text.toString(), spinner.selectedItem.toString(),
-                    etDescription.text.toString(), location, currentPhotoPath,
+                    etDescription.text.toString(), location, currentPhotoPath, currentVideoPath,
                     SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()))
                 newMemory.id = idToEdit
 
@@ -220,15 +261,14 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
     {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
         {
-            idToEdit = intent.getIntExtra(ID, 0)
-            setEditData(idToEdit)
+            setEditData(0)
             //galleryAddPic()
             //val imageBitmap = data?.extras?.get("data") as Bitmap
             //imgBtnPhoto.setImageBitmap(imageBitmap)
         }
         else if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK)
         {
-            val videoUri: Uri = intent.data!!
+            setEditData(0)
             //vvBtnVideo.setVideoURI(videoUri)
             //val imageBitmap = data?.extras?.get("data") as Bitmap
             //imgBtnVideo.setImageBitmap(imageBitmap)
@@ -251,7 +291,8 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
     override fun onLocationChanged(p0: Location?)
     {
         location = LatLng(p0!!.latitude, p0!!.longitude)
-        (mapFragment as MapFragment).setNewLocation(location)
+        if(mapFragment != null)
+            (mapFragment as MapFragment).setNewLocation(location)
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
@@ -282,4 +323,24 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
             sendBroadcast(mediaScanIntent)
         }
     }
+
+    private fun askForPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) { } else {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
+            }
+        } else {
+            permissionGranted = true
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) =
+        when (requestCode) {
+            0 -> permissionGranted = (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            else -> permissionGranted = false
+        }
 }

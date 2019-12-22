@@ -20,6 +20,9 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker
 import androidx.core.content.PermissionChecker.checkSelfPermission
+import com.google.android.gms.maps.model.CameraPosition
+
+
 
 
 class MapFragment : SupportMapFragment(), OnMapReadyCallback {
@@ -45,10 +48,15 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback {
         mapInterface.locateMap(mMap)
     }
 
-    fun setNewLocation(location: LatLng, addMark: Boolean = true)
+    fun setNewLocation(location: LatLng, addMarker: Boolean = false)
     {
-        if(addMark) mMap?.addMarker(MarkerOptions().position(location))
-        mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10f))
+        if(addMarker)
+            mMap?.addMarker(MarkerOptions().position(location))
+        val cameraPosition = CameraPosition.Builder()
+            .target(location)     // Sets the center of the map to location user
+            .zoom(16f)                   // Sets the zoom
+            .build()                   // Creates a CameraPosition from the builder
+        mMap?.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
 
         Toast.makeText(this.context, "Lat: "+ location.latitude + " long: "+ location.longitude, Toast.LENGTH_LONG).show()
     }

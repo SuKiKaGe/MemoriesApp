@@ -20,7 +20,7 @@ class Memory
 
     var location : LatLng
 
-    constructor (title : String, category : String, description : String, location: LatLng, photoPath : String? = null, date : Date = Date())
+    constructor (title : String, category : String, description : String, location: LatLng, photoPath : String? = null, videoPath:String? = null, date : Date = Date())
     {
         this.title = title
         this.category = Categories.valueOf(category)
@@ -28,7 +28,7 @@ class Memory
         this.description = description
         this.location = location
         this.photoPath = photoPath
-        this.videoPath = null
+        this.videoPath = videoPath
         this.audioPath = null
     }
 }

@@ -44,13 +44,13 @@ class MainActivity : AppCompatActivity()
             MemoriesManager.instance.addMemory(
                 Memory(
                     "Recuerdo 1", "Bad",
-                    "Descripción de recuerdo 1", LatLng(130.0, 150.0), ""
+                    "Descripción de recuerdo 1", LatLng(130.0, 150.0)
                 )
             )
             MemoriesManager.instance.addMemory(
                 Memory(
                     "Recuerdo 2", "BlackList",
-                    "Descripción de recuerdo 2", LatLng(50.0, 20.0), ""
+                    "Descripción de recuerdo 2", LatLng(50.0, 20.0)
                 )
             )
             MemoriesManager.instance.addMemory(
