@@ -1,6 +1,5 @@
 package es.usj.mastertsa.fm.memoriesapp
 
-import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 import java.util.*
 
@@ -13,14 +12,14 @@ class Memory
     var category : Categories
     var date : Date
     var description : String
-
     var photoPath : String?
     var videoPath : String?
     var audioPath : String?
-
     var location : LatLng
 
-    constructor (title : String, category : String, description : String, location: LatLng, photoPath : String? = null, videoPath:String? = null, date : Date = Date())
+    constructor (title : String, category : String, description : String, location : LatLng,
+                 photoPath : String? = null, videoPath : String? = null, audioPath : String? = null,
+                 date : Date = Date())
     {
         this.title = title
         this.category = Categories.valueOf(category)
@@ -29,6 +28,6 @@ class Memory
         this.location = location
         this.photoPath = photoPath
         this.videoPath = videoPath
-        this.audioPath = null
+        this.audioPath = audioPath
     }
 }

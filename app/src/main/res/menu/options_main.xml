@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+
+<menu
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
@@ -7,9 +9,11 @@
         android:icon="@android:drawable/ic_dialog_map"
         android:title="@string/map"
         app:showAsAction="always" />
+
     <item
         android:id="@+id/addMemory"
         android:icon="@android:drawable/ic_menu_add"
         android:title="@string/add_memory"
         app:showAsAction="ifRoom" />
+
 </menu>

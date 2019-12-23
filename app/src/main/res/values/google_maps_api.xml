@@ -3,6 +3,14 @@
     To get one, follow this link, follow the directions and press "Create" at the end:
 
     https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=C5:1A:34:56:52:59:F1:42:FB:24:FB:60:02:84:B6:17:A2:B5:F7:50%3Bes.usj.mastertsa.fm.memoriesapp
+
+    Account: usj.master.tsa.franymar@gmail.com
+    Password: franymar
+
+    Old API Key: AIzaSyCEFDwzd32_Drj2QUSYDp5KiNlu4R2MrTI
+
+    New API Key: AIzaSyBTqT2hqXINdh82voCi7nzR4tR0YDMSxYY
+
     -->
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCEFDwzd32_Drj2QUSYDp5KiNlu4R2MrTI</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyBTqT2hqXINdh82voCi7nzR4tR0YDMSxYY</string>
 </resources>

@@ -2,7 +2,6 @@ package es.usj.mastertsa.fm.memoriesapp
 
 import android.Manifest
 import android.content.Intent
-import android.graphics.Bitmap
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -12,7 +11,6 @@ import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
-import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_create_memory.*
@@ -24,6 +22,7 @@ import android.content.Context
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.annotation.SuppressLint
 import android.os.Environment
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -36,10 +35,10 @@ import kotlinx.android.synthetic.main.activity_create_memory.btnPhoto
 import kotlinx.android.synthetic.main.activity_create_memory.btnVideo
 import kotlinx.android.synthetic.main.activity_create_memory.imgBtnAudio
 import kotlinx.android.synthetic.main.activity_create_memory.imgBtnPhoto
+import kotlinx.android.synthetic.main.activity_create_memory.imgBtnVideo
 import kotlinx.android.synthetic.main.activity_create_memory.mapFragment
 import java.io.File
 import java.io.IOException
-
 
 const val ACTION = "New/Edit Memory"
 const val ID = "Memory Id"
@@ -48,18 +47,17 @@ const val REQUEST_VIDEO_CAPTURE = 2
 const val REQUEST_AUDIO_CAPTURE = 3
 const val VIEW_MEMORY_PHOTO = 4
 
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInterface
 {
+    private var idToEdit : Int = 0
+    private var location : LatLng = LatLng(0.0,0.0)
+    private var currentPhotoPath : String? = null
+    private var currentVideoPath : String? = null
+    private var currentAudioPath : String? = null
+    private var permissionGranted : Boolean = false
 
-    var idToEdit: Int = 0
-    var location: LatLng = LatLng(0.0,0.0)
-
-    var currentPhotoPath: String? = null
-    var currentVideoPath: String? = null
-
-    var permissionGranted: Boolean = false
-
-    override fun onCreate(savedInstanceState: Bundle?)
+    override fun onCreate(savedInstanceState : Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_memory)
@@ -67,44 +65,53 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         askForPermission()
 
         title = intent.getStringExtra(ACTION)
-        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, Categories.values())
+        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
+            Categories.values())
 
-        when (title) {
+        when (title)
+        {
             "New Memory" ->
             {
-                etDate.setText(SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date()))
-                val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                etDate.setText(SimpleDateFormat("dd/MM/yyyy",
+                    Locale.getDefault()).format(Date()))
 
-                if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                val locationManager = getSystemService(Context.LOCATION_SERVICE)
+                        as LocationManager
+
+                if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED)
                 {
-                    ActivityCompat.requestPermissions(this, arrayOf(ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION),225)
+                    ActivityCompat.requestPermissions(this,
+                        arrayOf(ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION),225)
                     return
-                } else
+                }
+                else
                 {
-                    locationManager.requestSingleUpdate( LocationManager.NETWORK_PROVIDER,this, Looper.getMainLooper())
+                    locationManager.requestSingleUpdate( LocationManager.NETWORK_PROVIDER,
+                        this, Looper.getMainLooper())
                 }
             }
+
             "Edit Memory" ->
             {
                 idToEdit = intent.getIntExtra(ID, 0)
                 setEditData(idToEdit)
             }
+
             else ->
             {
-                Toast.makeText(this, "Unknown Action For Memory", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Unknown Action For Memory.",
+                    Toast.LENGTH_SHORT).show()
             }
         }
 
         btnPhoto.setOnClickListener { takePhoto()  }
         btnVideo.setOnClickListener { recordVideo() }
-
         btnAudio.setOnClickListener {
-            Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION).also {
-                    takeAudioIntent -> takeAudioIntent.resolveActivity(packageManager)?.also {
-                    startActivityForResult(takeAudioIntent, REQUEST_AUDIO_CAPTURE)
-                }
-            }
+            val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
+            startActivityForResult(intent, REQUEST_AUDIO_CAPTURE)
         }
     }
 
@@ -112,19 +119,23 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
     {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             takePictureIntent.resolveActivity(packageManager)?.also {
-                val photoFile: File? = try {
+                val photoFile : File? = try {
                     createImageFile()
-                } catch (ex: IOException) {
+                }
+                catch (ex : IOException)
+                {
                     // Error occurred while creating the File ...
                     null
                 }
+
                 // Continue only if the File was successfully created
                 photoFile?.also {
-                    val photoURI: Uri = FileProvider.getUriForFile(
+                    val photoURI : Uri = FileProvider.getUriForFile(
                         this,
                         "es.usj.mastertsa.fm.memoriesapp.fileprovider",
                         it
                     )
+
                     saveTemp()
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
@@ -133,30 +144,36 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun recordVideo()
     {
         Intent(MediaStore.ACTION_VIDEO_CAPTURE).also { takeVideoIntent ->
             takeVideoIntent.resolveActivity(packageManager)?.also {
-                val videoFile: File? = try {
+                val videoFile : File? = try {
                     File.createTempFile(
-                        "MP4_${SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())}_", /* prefix */
+                        "MP4_${SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())}_",
+                        /* prefix */
                         ".mp4", /* suffix */
                         getExternalFilesDir(Environment.DIRECTORY_PICTURES) /* directory */
                     ).apply {
                         // Save a file: path for use with ACTION_VIEW intents
                         currentVideoPath = absolutePath
                     }
-                } catch (ex: IOException) {
+                }
+                catch (ex : IOException)
+                {
                     // Error occurred while creating the File ...
                     null
                 }
+
                 // Continue only if the File was successfully created
                 videoFile?.also {
-                    val videoURI: Uri = FileProvider.getUriForFile(
+                    val videoURI : Uri = FileProvider.getUriForFile(
                         this,
                         "es.usj.mastertsa.fm.memoriesapp.fileprovider",
                         it
                     )
+
                     saveTemp()
                     takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoURI)
                     startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
@@ -165,17 +182,22 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         }
     }
 
-    fun saveTemp()
+    @SuppressLint("SimpleDateFormat")
+    private fun saveTemp()
     {
-        MemoriesManager.instance.tempMemory = Memory(etTitle.text.toString(), spinner.selectedItem.toString(),
-            etDescription.text.toString(), location, currentPhotoPath, currentVideoPath,
+        MemoriesManager.instance.tempMemory = Memory(etTitle.text.toString(),
+            spinner.selectedItem.toString(), etDescription.text.toString(), location,
+            currentPhotoPath, currentVideoPath, currentAudioPath,
             SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()))
+
         MemoriesManager.instance.tempMemory.id = idToEdit
     }
 
-    private fun setEditData(id: Int)
+    @SuppressLint("SimpleDateFormat")
+    private fun setEditData(id : Int)
     {
-        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, Categories.values())
+        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
+            Categories.values())
 
         val memory = MemoriesManager.instance.findMemory(id)
 
@@ -185,6 +207,7 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         etDescription.setText(memory?.description)
 
         currentPhotoPath = memory?.photoPath
+
         if (!currentPhotoPath.isNullOrEmpty())
         {
             imgBtnPhoto.setImageResource(R.drawable.photo_available)
@@ -195,6 +218,8 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
                 startActivityForResult(intent, VIEW_MEMORY_PHOTO)
             }
         }
+
+        currentVideoPath = memory?.videoPath
 
         if (!memory?.videoPath.isNullOrEmpty())
         {
@@ -207,28 +232,40 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
             }
         }
 
+        currentAudioPath = memory?.audioPath
+
         if (!memory?.audioPath.isNullOrEmpty())
         {
             imgBtnAudio.setImageResource(R.drawable.audio_available)
+            imgBtnAudio.setOnClickListener {
+                val intent = Intent(this, ViewMemoryPhoto::class.java)
+                intent.putExtra(CURRENT_MULTIMEDIA_PATH, currentAudioPath)
+                intent.putExtra(MULTIMEDIA, MULTIMEDIA_AUDIO)
+                startActivityForResult(intent, VIEW_MEMORY_PHOTO)
+            }
         }
 
         location = memory?.location!!
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu : Menu?) : Boolean
+    {
         menuInflater.inflate(R.menu.options_create, menu)
 
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean
+    @SuppressLint("SimpleDateFormat")
+    override fun onOptionsItemSelected(item : MenuItem?) : Boolean
     {
         when(item!!.itemId)
         {
             R.id.save -> {
                 val newMemory = Memory(etTitle.text.toString(), spinner.selectedItem.toString(),
                     etDescription.text.toString(), location, currentPhotoPath, currentVideoPath,
+                    currentAudioPath,
                     SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()))
+
                 newMemory.id = idToEdit
 
                 when (title)
@@ -238,73 +275,78 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
                         MemoriesManager.instance.addMemory(newMemory)
                         setResult(NEW_MEMORY)
                     }
+
                     "Edit Memory" ->
                     {
                         MemoriesManager.instance.updateMemory(newMemory)
                         setResult(UPDATE_MEMORY)
                     }
+
                     else ->
                     {
-                        Toast.makeText(this, "Unknown Action For Memory", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Unknown Action For Memory.",
+                            Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 finish()
             }
-            else -> Toast.makeText(this, "Something was wrong", Toast.LENGTH_SHORT).show()
+            else ->
+            {
+                Toast.makeText(this, "Something was wrong.", Toast.LENGTH_SHORT).show()
+            }
         }
 
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    override fun onActivityResult(requestCode : Int, resultCode : Int, data : Intent?)
     {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
         {
             setEditData(0)
-            //galleryAddPic()
-            //val imageBitmap = data?.extras?.get("data") as Bitmap
-            //imgBtnPhoto.setImageBitmap(imageBitmap)
         }
         else if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK)
         {
             setEditData(0)
-            //vvBtnVideo.setVideoURI(videoUri)
-            //val imageBitmap = data?.extras?.get("data") as Bitmap
-            //imgBtnVideo.setImageBitmap(imageBitmap)
         }
         else if (requestCode == REQUEST_AUDIO_CAPTURE && resultCode == RESULT_OK)
         {
-                val audioUri : Uri = intent.data!!
-                // make use of this MediaStore uri
-                // e.g. store it somewhere
+            currentAudioPath = data!!.data!!.toString()
+            saveTemp()
+            setEditData(0)
         }
     }
 
-    override fun locateMap(map: GoogleMap?) {
-        if(location != LatLng(0.0, 0.0)) {
+    override fun locateMap(map : GoogleMap?)
+    {
+        if(location != LatLng(0.0, 0.0))
+        {
             map?.addMarker(MarkerOptions().position(location))
             map?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10f))
         }
     }
 
-    override fun onLocationChanged(p0: Location?)
+    override fun onLocationChanged(p0 : Location?)
     {
-        location = LatLng(p0!!.latitude, p0!!.longitude)
-        if(mapFragment != null)
-            (mapFragment as MapFragment).setNewLocation(location)
+        location = LatLng(p0!!.latitude, p0.longitude)
+
+        if(mapFragment != null) { (mapFragment as MapFragment).setNewLocation(location) }
     }
 
-    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
-    override fun onProviderEnabled(p0: String?) {}
-    override fun onProviderDisabled(p0: String?) {}
+    override fun onStatusChanged(p0 : String?, p1 : Int, p2 : Bundle?) { }
 
+    override fun onProviderEnabled(p0 : String?) { }
 
+    override fun onProviderDisabled(p0 : String?) { }
+
+    @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
-    private fun createImageFile(): File {
+    private fun createImageFile() : File
+    {
         // Create an image file name
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val timeStamp : String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir : File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(
             "JPEG_${timeStamp}_", /* prefix */
             ".jpg", /* suffix */
@@ -315,30 +357,24 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         }
     }
 
-    private fun galleryAddPic()
+    private fun askForPermission()
     {
-        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
-            val f = File(currentPhotoPath)
-            mediaScanIntent.data = Uri.fromFile(f)
-            sendBroadcast(mediaScanIntent)
-        }
-    }
-
-    private fun askForPermission() {
         if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED )
+        {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.READ_EXTERNAL_STORAGE)) { } else {
                 ActivityCompat.requestPermissions(this,
                     arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
             }
-        } else {
-            permissionGranted = true
         }
+        else { permissionGranted = true }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) =
-        when (requestCode) {
+    override fun onRequestPermissionsResult(requestCode : Int, permissions : Array<String>,
+                                            grantResults : IntArray) =
+        when (requestCode)
+        {
             0 -> permissionGranted = (grantResults.isNotEmpty() &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED)
             else -> permissionGranted = false

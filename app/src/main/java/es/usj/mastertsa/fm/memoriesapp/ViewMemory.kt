@@ -1,5 +1,6 @@
 package es.usj.mastertsa.fm.memoriesapp
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -18,10 +19,11 @@ import java.text.SimpleDateFormat
 
 class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
 {
-    var id: Int = 0
-    private lateinit var location: LatLng
+    var id : Int = 0
+    private lateinit var location : LatLng
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState : Bundle?)
+    {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_memory)
 
@@ -30,9 +32,11 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
         setViewContent()
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun setViewContent()
     {
         val memory = MemoriesManager.instance.memories.find { it.id == id }!!
+
         title = memory.title
         tvCategoryItem.text = memory.category.toString()
         tvDateItem.text = (SimpleDateFormat("dd/MM/yyyy").format(memory.date))
@@ -63,18 +67,25 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
         if (!memory.audioPath.isNullOrEmpty())
         {
             imgBtnAudio.setImageResource(R.drawable.audio_available)
+            imgBtnAudio.setOnClickListener {
+                val intent = Intent(this, ViewMemoryPhoto::class.java)
+                intent.putExtra(CURRENT_MULTIMEDIA_PATH, memory.audioPath)
+                intent.putExtra(MULTIMEDIA, MULTIMEDIA_AUDIO)
+                startActivityForResult(intent, VIEW_MEMORY_PHOTO)
+            }
         }
 
         location = memory.location
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean
+    override fun onCreateOptionsMenu(menu : Menu?) : Boolean
     {
         menuInflater.inflate(R.menu.options_view, menu)
+
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean
+    override fun onOptionsItemSelected(item : MenuItem?) : Boolean
     {
         when(item!!.itemId)
         {
@@ -84,20 +95,24 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
                 intent.putExtra(ID, id)
                 startActivityForResult(intent, UPDATE_MEMORY)
             }
+
             R.id.delete -> {
                 MemoriesManager.instance.deleteMemory(id)
                 setResult(DELETE_MEMORY)
                 finish()
             }
-            else -> Toast.makeText(this, "Something was wrong", Toast.LENGTH_SHORT).show()
+
+            else -> Toast.makeText(this, "Something was wrong.",
+                Toast.LENGTH_SHORT).show()
         }
 
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    override fun onActivityResult(requestCode : Int, resultCode : Int, data : Intent?)
     {
         super.onActivityResult(requestCode, resultCode, data)
+
         when(requestCode)
         {
             UPDATE_MEMORY -> setViewContent()
@@ -110,7 +125,8 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
         setResult(UNMODIFIED)
     }
 
-    override fun locateMap(map: GoogleMap?) {
+    override fun locateMap(map : GoogleMap?)
+    {
         map?.addMarker(MarkerOptions().position(location))
         map?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10f))
     }

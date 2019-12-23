@@ -10,7 +10,7 @@
     tools:context=".ManageMemory">
 
     <ScrollView
-        android:id="@+id/scrollView2"
+        android:id="@+id/scrollView"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -27,19 +27,34 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp">
 
-            <EditText
-                android:id="@+id/etTitle"
+            <LinearLayout
+                android:id="@+id/TitleLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:ems="10"
-                android:hint="@string/edit_text_memory_title_hint"
-                android:importantForAutofill="no"
-                android:inputType="textPersonName" />
+                android:orientation="horizontal"
+                android:weightSum="5">
+
+                <EditText
+                    android:id="@+id/etTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="@string/edit_text_memory_title_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="textPersonName"
+                    android:textSize="14sp"
+                    tools:ignore="InefficientWeight" />
+
+            </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/CategoryLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -65,6 +80,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/DateLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -75,27 +91,41 @@
                     android:id="@+id/etDate"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="4"
+                    android:layout_weight="5"
                     android:ems="10"
                     android:hint="@string/edit_text_date_hint"
                     android:importantForAutofill="no"
                     android:inputType="date"
-                    android:textAlignment="textStart" />
+                    android:textAlignment="textStart"
+                    android:textSize="14sp"
+                    tools:ignore="InefficientWeight" />
 
             </LinearLayout>
 
-            <EditText
-                android:id="@+id/etDescription"
+            <LinearLayout
+                android:id="@+id/DescriptionLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:ems="10"
-                android:hint="@string/edit_text_description_hint"
-                android:importantForAutofill="no"
-                android:inputType="textPersonName" />
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:weightSum="5">
+
+                <EditText
+                    android:id="@+id/etDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="@string/edit_text_description_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="textPersonName"
+                    android:textSize="14sp"
+                    tools:ignore="InefficientWeight" />
+
+            </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/btnLayout"
+                android:id="@+id/ButtonLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -124,9 +154,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/button_audio_text" />
+
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/IconLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
@@ -140,7 +172,7 @@
                     android:clickable="false"
                     android:contentDescription="@string/photo_image_content_description"
                     android:src="@drawable/photo_not_available"
-                    tools:src="@drawable/photo_not_available"
+                    android:background="#00000000"
                     tools:srcCompat="@drawable/photo_not_available" />
 
                 <ImageButton
@@ -151,7 +183,7 @@
                     android:clickable="false"
                     android:contentDescription="@string/video_image_content_description"
                     android:src="@drawable/video_not_available"
-                    tools:src="@drawable/video_not_available"
+                    android:background="#00000000"
                     tools:srcCompat="@drawable/video_not_available" />
 
                 <ImageButton
@@ -162,11 +194,13 @@
                     android:clickable="false"
                     android:contentDescription="@string/audio_image_content_description"
                     android:src="@drawable/audio_not_available"
-                    tools:src="@drawable/audio_not_available"
+                    android:background="#00000000"
                     tools:srcCompat="@drawable/audio_not_available" />
+
             </LinearLayout>
 
         </LinearLayout>
+
     </ScrollView>
 
     <fragment
@@ -177,7 +211,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView2"
+        app:layout_constraintTop_toBottomOf="parent"
         tools:layout="@layout/fragment_map" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

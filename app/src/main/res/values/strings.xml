@@ -1,8 +1,6 @@
 <resources>
-    <!-- Main Activity -->
     <string name="app_name">MemoriesApp</string>
     <string name="add_memory">addMemory</string>
-    <!-- Create Memory Activity -->
     <string name="edit_text_memory_title_hint">Title of the Memory</string>
     <string name="image_reminder_content_description">Reminder</string>
     <string name="edit_text_date_hint">Date</string>
@@ -19,6 +17,7 @@
     <string name="tvCategory">Category</string>
     <string name="map">map</string>
     <string name="list">list</string>
+    <string name="save">Save</string>
     <string-array name="category_array">
         <item>Good</item>
         <item>Bad</item>
