@@ -47,8 +47,5 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback
             .zoom(16f)                   // Sets the zoom
             .build()                   // Creates a CameraPosition from the builder
         mMap?.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-
-        Toast.makeText(this.context, "Lat: " + location.latitude + " long: " +
-                location.longitude, Toast.LENGTH_LONG).show()
     }
 }

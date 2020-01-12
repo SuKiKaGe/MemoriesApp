@@ -15,8 +15,10 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import es.usj.mastertsa.fm.memoriesapp.Categories.*
 import kotlinx.android.synthetic.main.activity_create_memory.mapFragment
 
 class MapActivity : AppCompatActivity(), LocationListener, MapFragment.MapInterface
@@ -55,7 +57,7 @@ class MapActivity : AppCompatActivity(), LocationListener, MapFragment.MapInterf
     {
         for (memory in MemoriesManager.instance.memories)
         {
-            map?.addMarker(MarkerOptions().position(memory.location))
+            map?.addMarker(MarkerOptions().position(memory.location).icon(BitmapDescriptorFactory.defaultMarker(memory.getColor())))
         }
 
         map?.isMyLocationEnabled = true

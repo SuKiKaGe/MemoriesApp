@@ -11,12 +11,6 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_view_memory_multimedia.*
 
-const val CURRENT_MULTIMEDIA_PATH = "Current Photo Path"
-const val MULTIMEDIA = "Multimedia"
-const val MULTIMEDIA_PHOTO = 41
-const val MULTIMEDIA_VIDEO = 42
-const val MULTIMEDIA_AUDIO = 43
-
 class ViewMemoryPhoto : AppCompatActivity()
 {
     var id = 0

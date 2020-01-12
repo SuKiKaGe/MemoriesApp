@@ -1,6 +1,7 @@
 package es.usj.mastertsa.fm.memoriesapp
 
 import android.Manifest
+import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -12,7 +13,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
+import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -28,15 +29,6 @@ import com.google.maps.android.SphericalUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigDecimal
 import java.math.RoundingMode
-
-const val UNMODIFIED = 0
-const val NEW_MEMORY = 10
-const val UPDATE_MEMORY = 11
-const val VIEW_MEMORY = 12
-const val DELETE_MEMORY = 13
-const val minimumDistanceToNotifyDangerZone = 10
-const val CHANNEL = "CHANNEL_1"
-const val CHANNEL_NAME = "BlackList Channel"
 
 @Suppress("EnumEntryName")
 enum class Order { Date, Name_A_Z, Name_Z_A, Category_A_Z, Category_Z_A }
@@ -57,8 +49,8 @@ class MainActivity : AppCompatActivity(), LocationListener
         spOrder.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent : AdapterView<*>?) { }
 
-            override fun onItemSelected(parent : AdapterView<*>?, view : View?, position : Int,
-                                        id : Long) { setList(spOrder.selectedItem as Order) }
+            override fun onItemSelected(parent : AdapterView<*>?, view : View?, position : Int, id : Long)
+            { setList(spOrder.selectedItem as Order) }
         }
 
         setList(null)
@@ -87,6 +79,23 @@ class MainActivity : AppCompatActivity(), LocationListener
             locationManager.requestSingleUpdate( LocationManager.NETWORK_PROVIDER,
                 this, Looper.getMainLooper())
         }
+
+        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) requestGPS()
+    }
+
+    private fun requestGPS()
+    {
+        val builder = AlertDialog.Builder(this@MainActivity)
+        builder.setTitle("Location")
+        builder.setMessage("The location must be enable")
+        builder.setPositiveButton("YES"){dialog, which ->
+            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+        }
+        builder.setNegativeButton("No"){dialog,which ->
+            Toast.makeText(applicationContext,"You are not agree.",Toast.LENGTH_SHORT).show()
+        }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -161,13 +170,13 @@ class MainActivity : AppCompatActivity(), LocationListener
         listMemories.setOnItemClickListener { _, _, position, _ ->
             val item = MemoriesManager.instance.getMemories(order)[position]
             // The item that was clicked
-
             val intent = Intent(this, ViewMemory::class.java)
             intent.putExtra(ID, item.id)
             startActivityForResult(intent, VIEW_MEMORY)
         }
     }
 
+    //region Menu
     override fun onCreateOptionsMenu(menu : Menu?) : Boolean
     {
         menuInflater.inflate(R.menu.options_main, menu)
@@ -197,20 +206,9 @@ class MainActivity : AppCompatActivity(), LocationListener
 
         return super.onOptionsItemSelected(item)
     }
+    //endregion
 
-    override fun onActivityResult(requestCode : Int, resultCode : Int, data : Intent?)
-    {
-        when(requestCode)
-        {
-            NEW_MEMORY, UPDATE_MEMORY, VIEW_MEMORY, DELETE_MEMORY ->
-            {
-                setList(null)
-            }
-        }
-
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
+    //region Map
     override fun onLocationChanged(p0 : Location?)
     {
         val location = LatLng(p0!!.latitude, p0.longitude)
@@ -231,9 +229,6 @@ class MainActivity : AppCompatActivity(), LocationListener
                     "You should not be here, mortal! (Distance is " +
                             "$roundDistanceToMemoryLocation meters)")
             }
-
-            Log.v("DISTANCE", "Distance to " + memory.title + " memory is " +
-                    roundDistanceToMemoryLocation.toString() + " meters.")
         }
     }
 
@@ -242,4 +237,18 @@ class MainActivity : AppCompatActivity(), LocationListener
     override fun onProviderEnabled(p0 : String?) { }
 
     override fun onProviderDisabled(p0 : String?) { }
+    //endregion
+
+    override fun onActivityResult(requestCode : Int, resultCode : Int, data : Intent?)
+    {
+        when(requestCode)
+        {
+            NEW_MEMORY, UPDATE_MEMORY, VIEW_MEMORY, DELETE_MEMORY ->
+            {
+                setList(null)
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 }

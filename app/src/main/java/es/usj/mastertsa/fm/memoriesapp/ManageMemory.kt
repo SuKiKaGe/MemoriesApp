@@ -24,6 +24,7 @@ import androidx.core.app.ActivityCompat
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.annotation.SuppressLint
 import android.os.Environment
+import android.provider.Settings
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -40,13 +41,6 @@ import kotlinx.android.synthetic.main.activity_create_memory.mapFragment
 import java.io.File
 import java.io.IOException
 
-const val ACTION = "New/Edit Memory"
-const val ID = "Memory Id"
-const val REQUEST_IMAGE_CAPTURE = 1
-const val REQUEST_VIDEO_CAPTURE = 2
-const val REQUEST_AUDIO_CAPTURE = 3
-const val VIEW_MEMORY_PHOTO = 4
-
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInterface
 {
@@ -57,6 +51,7 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
     private var currentAudioPath : String? = null
     private var permissionGranted : Boolean = false
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState : Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -75,13 +70,9 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
                 etDate.setText(SimpleDateFormat("dd/MM/yyyy",
                     Locale.getDefault()).format(Date()))
 
-                val locationManager = getSystemService(Context.LOCATION_SERVICE)
-                        as LocationManager
+                val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-                if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED)
+                if (checkPermissionBoolean())
                 {
                     ActivityCompat.requestPermissions(this,
                         arrayOf(ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION),225)
@@ -115,6 +106,7 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         }
     }
 
+    //region Media functionality
     private fun takePhoto()
     {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
@@ -141,6 +133,23 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
                 }
             }
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    @Throws(IOException::class)
+    private fun createImageFile() : File
+    {
+        // Create an image file name
+        val timeStamp : String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir : File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
         }
     }
 
@@ -181,6 +190,7 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
             }
         }
     }
+    //endregion
 
     @SuppressLint("SimpleDateFormat")
     private fun saveTemp()
@@ -194,7 +204,7 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
     }
 
     @SuppressLint("SimpleDateFormat")
-    private fun setEditData(id : Int)
+    private fun setEditData(id : Int = 0)
     {
         spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
             Categories.values())
@@ -248,10 +258,10 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         location = memory?.location!!
     }
 
+    //region Menu
     override fun onCreateOptionsMenu(menu : Menu?) : Boolean
     {
         menuInflater.inflate(R.menu.options_create, menu)
-
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -299,25 +309,23 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
 
         return super.onOptionsItemSelected(item)
     }
+    //endregion
 
     override fun onActivityResult(requestCode : Int, resultCode : Int, data : Intent?)
     {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
+        if ((requestCode == REQUEST_IMAGE_CAPTURE || requestCode == REQUEST_VIDEO_CAPTURE)&& resultCode == RESULT_OK)
         {
-            setEditData(0)
-        }
-        else if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK)
-        {
-            setEditData(0)
+            setEditData()
         }
         else if (requestCode == REQUEST_AUDIO_CAPTURE && resultCode == RESULT_OK)
         {
             currentAudioPath = data!!.data!!.toString()
             saveTemp()
-            setEditData(0)
+            setEditData()
         }
     }
 
+    //region Map functionality
     override fun locateMap(map : GoogleMap?)
     {
         if(location != LatLng(0.0, 0.0))
@@ -331,7 +339,7 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
     {
         location = LatLng(p0!!.latitude, p0.longitude)
 
-        if(mapFragment != null) { (mapFragment as MapFragment).setNewLocation(location) }
+        if(mapFragment != null) { (mapFragment as MapFragment).setNewLocation(location, true) }
     }
 
     override fun onStatusChanged(p0 : String?, p1 : Int, p2 : Bundle?) { }
@@ -339,24 +347,9 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
     override fun onProviderEnabled(p0 : String?) { }
 
     override fun onProviderDisabled(p0 : String?) { }
+    //endregion
 
-    @SuppressLint("SimpleDateFormat")
-    @Throws(IOException::class)
-    private fun createImageFile() : File
-    {
-        // Create an image file name
-        val timeStamp : String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val storageDir : File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(
-            "JPEG_${timeStamp}_", /* prefix */
-            ".jpg", /* suffix */
-            storageDir /* directory */
-        ).apply {
-            // Save a file: path for use with ACTION_VIEW intents
-            currentPhotoPath = absolutePath
-        }
-    }
-
+    //region Permissions
     private fun askForPermission()
     {
         if (ContextCompat.checkSelfPermission(this,
@@ -379,4 +372,11 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
                     grantResults[0] == PackageManager.PERMISSION_GRANTED)
             else -> permissionGranted = false
         }
+
+    private fun checkPermissionBoolean(): Boolean
+    {
+        return ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED
+    }
+    //endregion
 }

@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_view_memory.*
@@ -21,6 +22,7 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
 {
     var id : Int = 0
     private lateinit var location : LatLng
+    var color: Float = 0f
 
     override fun onCreate(savedInstanceState : Bundle?)
     {
@@ -76,6 +78,7 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
         }
 
         location = memory.location
+        color = memory.getColor()
     }
 
     override fun onCreateOptionsMenu(menu : Menu?) : Boolean
@@ -127,7 +130,7 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
 
     override fun locateMap(map : GoogleMap?)
     {
-        map?.addMarker(MarkerOptions().position(location))
+        map?.addMarker(MarkerOptions().position(location).icon(BitmapDescriptorFactory.defaultMarker(color)))
         map?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10f))
     }
 }

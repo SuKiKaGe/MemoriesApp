@@ -2,6 +2,7 @@ package es.usj.mastertsa.fm.memoriesapp
 
 class MemoriesManager private constructor()
 {
+    //region Singleton
     private object HOLDER
     {
         val INSTANCE = MemoriesManager()
@@ -11,6 +12,7 @@ class MemoriesManager private constructor()
     {
         val instance : MemoriesManager by lazy { HOLDER.INSTANCE }
     }
+    //endregion
 
     var memories : ArrayList<Memory> = ArrayList()
     private var maxId : Int = 1
@@ -51,8 +53,8 @@ class MemoriesManager private constructor()
         val orderMemories : List<Memory> = when(orderSelected)
         {
             Order.Date -> memories.sortedBy { it.date }
-            Order.Name_A_Z -> memories.sortedBy { it.title }
-            Order.Name_Z_A ->
+            Order.Name_Z_A -> memories.sortedBy { it.title }
+            Order.Name_A_Z ->
             {
                 val temp = memories.sortedBy { it.title }
                 temp.reversed()

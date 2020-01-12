@@ -18,6 +18,7 @@
     <string name="map">map</string>
     <string name="list">list</string>
     <string name="save">Save</string>
+    <string name="title">Title</string>
     <string-array name="category_array">
         <item>Good</item>
         <item>Bad</item>

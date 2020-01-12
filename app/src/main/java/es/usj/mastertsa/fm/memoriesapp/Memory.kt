@@ -1,5 +1,6 @@
 package es.usj.mastertsa.fm.memoriesapp
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import java.util.*
 
@@ -29,5 +30,19 @@ class Memory
         this.photoPath = photoPath
         this.videoPath = videoPath
         this.audioPath = audioPath
+    }
+
+    public fun getColor(): Float
+    {
+        return when(category)
+        {
+            Categories.Good -> BitmapDescriptorFactory.HUE_AZURE
+            Categories.Bad -> BitmapDescriptorFactory.HUE_VIOLET
+            Categories.Celebration -> BitmapDescriptorFactory.HUE_BLUE
+            Categories.BlackList -> BitmapDescriptorFactory.HUE_RED
+            Categories.Love -> BitmapDescriptorFactory.HUE_ROSE
+            Categories.Friends -> BitmapDescriptorFactory.HUE_YELLOW
+            Categories.Travel -> BitmapDescriptorFactory.HUE_GREEN
+        }
     }
 }
