@@ -23,6 +23,7 @@ import android.os.Looper
 import androidx.core.app.ActivityCompat
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.os.Environment
 import android.provider.Settings
 import androidx.core.content.ContextCompat
@@ -101,8 +102,13 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         btnPhoto.setOnClickListener { takePhoto()  }
         btnVideo.setOnClickListener { recordVideo() }
         btnAudio.setOnClickListener {
-            val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
-            startActivityForResult(intent, REQUEST_AUDIO_CAPTURE)
+            try {
+                val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
+                startActivityForResult(intent, REQUEST_AUDIO_CAPTURE)
+            }catch (e: ActivityNotFoundException)
+            {
+                Toast.makeText(this, "No default application for recording", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -197,8 +203,8 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
     {
         MemoriesManager.instance.tempMemory = Memory(etTitle.text.toString(),
             spinner.selectedItem.toString(), etDescription.text.toString(), location,
-            currentPhotoPath, currentVideoPath, currentAudioPath,
-            SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()))
+            SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()),
+            currentPhotoPath, currentVideoPath, currentAudioPath)
 
         MemoriesManager.instance.tempMemory.id = idToEdit
     }
@@ -272,9 +278,9 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         {
             R.id.save -> {
                 val newMemory = Memory(etTitle.text.toString(), spinner.selectedItem.toString(),
-                    etDescription.text.toString(), location, currentPhotoPath, currentVideoPath,
-                    currentAudioPath,
-                    SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()))
+                    etDescription.text.toString(), location,
+                    SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()), currentPhotoPath, currentVideoPath,
+                    currentAudioPath)
 
                 newMemory.id = idToEdit
 
@@ -350,19 +356,19 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
     //endregion
 
     //region Permissions
-    private fun askForPermission()
+    private fun askForPermission() = if (ContextCompat.checkSelfPermission(this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED )
     {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED )
-        {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) { } else {
-                ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
-            }
+        if(!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0
+            )
         }
-        else { permissionGranted = true }
+        else {}
     }
+    else { permissionGranted = true }
 
     override fun onRequestPermissionsResult(requestCode : Int, permissions : Array<String>,
                                             grantResults : IntArray) =

@@ -109,7 +109,7 @@ class MapActivity : AppCompatActivity(), LocationListener, MapFragment.MapInterf
     {
         when(requestCode)
         {
-            NEW_MEMORY -> { }
+            NEW_MEMORY -> { finish() }
         }
 
         super.onActivityResult(requestCode, resultCode, data)

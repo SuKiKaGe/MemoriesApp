@@ -142,22 +142,44 @@ class MainActivity : AppCompatActivity(), LocationListener
     {
         MemoriesManager.instance.addMemory(
             Memory(
-                "Memory 1", "Bad",
-                "Memory Description 1", LatLng(130.0, 150.0)
+                "Perdí 20 euros", "Bad",
+                "Estaba caminando por la calle y me di cuenta que en algún momento sacando el móvil se me calló un billete que llevaba en el bolsillo",
+                LatLng(41.671128, -0.889325)
             )
         )
 
         MemoriesManager.instance.addMemory(
             Memory(
-                "Memory 2", "BlackList",
-                "Memory Description 2", LatLng(50.0, 20.0)
+                "Mi pareja me dejó", "BlackList",
+                "Celebrando nuestro tercer aniversario decidió que no quería seguir conmigo", LatLng(41.667598, -0.892878)
             )
         )
 
         MemoriesManager.instance.addMemory(
             Memory(
-                "Memory 3", "Travel",
-                "Memory Description 3", LatLng(200.0, 180.0)
+                "El Pilar", "Travel",
+                "Gran viaje a una ciudad preciosa y fría", LatLng(41.656565, -0.878166)
+            )
+        )
+
+        MemoriesManager.instance.addMemory(
+            Memory(
+                "Magia potagia", "Friends",
+                "Tarde en el teatro central viendo un espectáculo de magia con buena compañía", LatLng(41.651768, -0.879397)
+            )
+        )
+
+        MemoriesManager.instance.addMemory(
+            Memory(
+                "Patrón USJ", "Celebration",
+                "Celebración del patrón de la universidad", LatLng(41.756797, -0.832194)
+            )
+        )
+
+        MemoriesManager.instance.addMemory(
+            Memory(
+                "Bienvenido a mi vida", "Love",
+                "Hemos adoptado a nuestro bebé, bienvenido Pancho", LatLng(41.767716, -0.825706)
             )
         )
     }

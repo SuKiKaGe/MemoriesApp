@@ -4,35 +4,26 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import java.util.*
 
-enum class Categories { Good, Bad, Celebration, BlackList, Love, Friends, Travel }
+enum class Categories { Bad, BlackList, Celebration, Friends, Good, Love, Travel }
 
-class Memory
-{
+class Memory(
+    var title: String,
+    category: String,
+    var description: String,
+    var location: LatLng,
+    var date: Date = Date(),
+    var photoPath: String? = null,
+    var videoPath: String? = null,
+    var audioPath: String? = null
+) {
     var id : Int = 0
-    var title : String
     var category : Categories
-    var date : Date
-    var description : String
-    var photoPath : String?
-    var videoPath : String?
-    var audioPath : String?
-    var location : LatLng
 
-    constructor (title : String, category : String, description : String, location : LatLng,
-                 photoPath : String? = null, videoPath : String? = null, audioPath : String? = null,
-                 date : Date = Date())
-    {
-        this.title = title
+    init {
         this.category = Categories.valueOf(category)
-        this.date = date
-        this.description = description
-        this.location = location
-        this.photoPath = photoPath
-        this.videoPath = videoPath
-        this.audioPath = audioPath
     }
 
-    public fun getColor(): Float
+    fun getColor(): Float
     {
         return when(category)
         {

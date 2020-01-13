@@ -13,7 +13,7 @@
         android:id="@+id/scrollView"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/mapFragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -23,13 +23,13 @@
             android:layout_height="wrap_content"
             android:isScrollContainer="true"
             android:orientation="vertical"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp"
             android:weightSum="10"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp">
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/tvTitle"
@@ -208,10 +208,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="#00000000"
                     android:clickable="false"
                     android:contentDescription="@string/photo_image_content_description"
                     android:src="@drawable/photo_not_available"
-                    android:background="#00000000"
                     tools:srcCompat="@drawable/photo_not_available" />
 
                 <ImageButton
@@ -219,10 +219,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="#00000000"
                     android:clickable="false"
                     android:contentDescription="@string/video_image_content_description"
                     android:src="@drawable/video_not_available"
-                    android:background="#00000000"
                     tools:srcCompat="@drawable/video_not_available" />
 
                 <ImageButton
@@ -230,10 +230,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="#00000000"
                     android:clickable="false"
                     android:contentDescription="@string/audio_image_content_description"
                     android:src="@drawable/audio_not_available"
-                    android:background="#00000000"
                     tools:srcCompat="@drawable/audio_not_available" />
 
             </LinearLayout>
@@ -246,11 +246,11 @@
         android:id="@+id/mapFragment"
         android:name="es.usj.mastertsa.fm.memoriesapp.MapFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView"
         tools:layout="@layout/fragment_map" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

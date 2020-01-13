@@ -53,8 +53,8 @@ class MemoriesManager private constructor()
         val orderMemories : List<Memory> = when(orderSelected)
         {
             Order.Date -> memories.sortedBy { it.date }
-            Order.Name_Z_A -> memories.sortedBy { it.title }
-            Order.Name_A_Z ->
+            Order.Name_A_Z -> memories.sortedBy { it.title }
+            Order.Name_Z_A ->
             {
                 val temp = memories.sortedBy { it.title }
                 temp.reversed()
