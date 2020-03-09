@@ -1,4 +1,4 @@
-package es.usj.mastertsa.fm.memoriesapp
+package es.usj.mastertsa.fm.memoriesapp.PresentationLayer
 
 import android.Manifest
 import android.content.Intent
@@ -25,13 +25,14 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.os.Environment
-import android.provider.Settings
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import es.usj.mastertsa.fm.memoriesapp.DomainLayer.*
+import es.usj.mastertsa.fm.memoriesapp.R
 import kotlinx.android.synthetic.main.activity_create_memory.btnAudio
 import kotlinx.android.synthetic.main.activity_create_memory.btnPhoto
 import kotlinx.android.synthetic.main.activity_create_memory.btnVideo
@@ -43,7 +44,8 @@ import java.io.File
 import java.io.IOException
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInterface
+class ManageMemory : AppCompatActivity(), LocationListener,
+    MapFragment.MapInterface
 {
     private var idToEdit : Int = 0
     private var location : LatLng = LatLng(0.0,0.0)
@@ -104,7 +106,9 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         btnAudio.setOnClickListener {
             try {
                 val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
-                startActivityForResult(intent, REQUEST_AUDIO_CAPTURE)
+                startActivityForResult(intent,
+                    REQUEST_AUDIO_CAPTURE
+                )
             }catch (e: ActivityNotFoundException)
             {
                 Toast.makeText(this, "No default application for recording", Toast.LENGTH_SHORT).show()
@@ -136,7 +140,9 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
 
                     saveTemp()
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                    startActivityForResult(takePictureIntent,
+                        REQUEST_IMAGE_CAPTURE
+                    )
                 }
             }
         }
@@ -191,7 +197,9 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
 
                     saveTemp()
                     takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoURI)
-                    startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
+                    startActivityForResult(takeVideoIntent,
+                        REQUEST_VIDEO_CAPTURE
+                    )
                 }
             }
         }
@@ -201,12 +209,14 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
     @SuppressLint("SimpleDateFormat")
     private fun saveTemp()
     {
-        MemoriesManager.instance.tempMemory = Memory(etTitle.text.toString(),
-            spinner.selectedItem.toString(), etDescription.text.toString(), location,
-            SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()),
-            currentPhotoPath, currentVideoPath, currentAudioPath)
-
-        MemoriesManager.instance.tempMemory.id = idToEdit
+        MemoriesManager.instance.tempMemory =
+            Memory(
+                idToEdit,
+                etTitle.text.toString(),
+                spinner.selectedItem.toString(), etDescription.text.toString(), location,
+                SimpleDateFormat("dd/MM/yyyy").parse(etDate.text.toString()),
+                currentPhotoPath, currentVideoPath, currentAudioPath
+            )
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -230,8 +240,13 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
             imgBtnPhoto.setOnClickListener {
                 val intent = Intent(this, ViewMemoryPhoto::class.java)
                 intent.putExtra(CURRENT_MULTIMEDIA_PATH, currentPhotoPath)
-                intent.putExtra(MULTIMEDIA, MULTIMEDIA_PHOTO)
-                startActivityForResult(intent, VIEW_MEMORY_PHOTO)
+                intent.putExtra(
+                    MULTIMEDIA,
+                    MULTIMEDIA_PHOTO
+                )
+                startActivityForResult(intent,
+                    VIEW_MEMORY_PHOTO
+                )
             }
         }
 
@@ -243,8 +258,13 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
             imgBtnVideo.setOnClickListener {
                 val intent = Intent(this, ViewMemoryPhoto::class.java)
                 intent.putExtra(CURRENT_MULTIMEDIA_PATH, currentVideoPath)
-                intent.putExtra(MULTIMEDIA, MULTIMEDIA_VIDEO)
-                startActivityForResult(intent, VIEW_MEMORY_PHOTO)
+                intent.putExtra(
+                    MULTIMEDIA,
+                    MULTIMEDIA_VIDEO
+                )
+                startActivityForResult(intent,
+                    VIEW_MEMORY_PHOTO
+                )
             }
         }
 
@@ -256,8 +276,13 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
             imgBtnAudio.setOnClickListener {
                 val intent = Intent(this, ViewMemoryPhoto::class.java)
                 intent.putExtra(CURRENT_MULTIMEDIA_PATH, currentAudioPath)
-                intent.putExtra(MULTIMEDIA, MULTIMEDIA_AUDIO)
-                startActivityForResult(intent, VIEW_MEMORY_PHOTO)
+                intent.putExtra(
+                    MULTIMEDIA,
+                    MULTIMEDIA_AUDIO
+                )
+                startActivityForResult(intent,
+                    VIEW_MEMORY_PHOTO
+                )
             }
         }
 
@@ -277,12 +302,18 @@ class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInter
         when(item!!.itemId)
         {
             R.id.save -> {
-                val newMemory = Memory(etTitle.text.toString(), spinner.selectedItem.toString(),
-                    etDescription.text.toString(), location,
-                    SimpleDateFormat("dd/MM/yyyy").parse( etDate.text.toString()), currentPhotoPath, currentVideoPath,
-                    currentAudioPath)
-
-                newMemory.id = idToEdit
+                val newMemory =
+                    Memory(
+                        idToEdit,
+                        etTitle.text.toString(),
+                        spinner.selectedItem.toString(),
+                        etDescription.text.toString(),
+                        location,
+                        SimpleDateFormat("dd/MM/yyyy").parse(etDate.text.toString()),
+                        currentPhotoPath,
+                        currentVideoPath,
+                        currentAudioPath
+                    )
 
                 when (title)
                 {

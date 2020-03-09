@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:ignore="NestedWeights"
-    tools:context=".ViewMemory">
+    tools:context=".PresentationLayer.ViewMemory">
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -209,7 +209,7 @@
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="es.usj.mastertsa.fm.memoriesapp.MapFragment"
+        android:name="es.usj.mastertsa.fm.memoriesapp.PresentationLayer.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

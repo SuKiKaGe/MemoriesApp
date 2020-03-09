@@ -1,4 +1,4 @@
-package es.usj.mastertsa.fm.memoriesapp
+package es.usj.mastertsa.fm.memoriesapp.PresentationLayer
 
 import android.Manifest
 import android.app.AlertDialog
@@ -14,6 +14,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -26,9 +27,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
+import es.usj.mastertsa.fm.memoriesapp.*
+import es.usj.mastertsa.fm.memoriesapp.DataLayer.core.DaoFactory
+import es.usj.mastertsa.fm.memoriesapp.DataLayer.core.IDao
+import es.usj.mastertsa.fm.memoriesapp.DataLayer.model.MemoryModel
+import es.usj.mastertsa.fm.memoriesapp.DomainLayer.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.util.*
 
 @Suppress("EnumEntryName")
 enum class Order { Date, Name_A_Z, Name_Z_A, Category_A_Z, Category_Z_A }
@@ -41,7 +48,30 @@ class MainActivity : AppCompatActivity(), LocationListener
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (MemoriesManager.instance.memories.size <= 0) { fillMemoriesWithExamples() }
+        val dao : IDao<MemoryModel> = DaoFactory.getFactory().getMemoryDAO(this)
+
+        val memory = MemoryModel(
+            1,
+            "USJ",
+            "Bad",
+            "Estaba caminando por la calle y me di cuenta que en algún momento sacando el móvil se me calló un billete que llevaba en el bolsillo",
+            latitude = 41.671128F,
+            longitude = -0.889325F,
+            date = Date(),
+            photoPath = null,
+            videoPath = null,
+            audioPath = null
+        )
+        //dao.insert(memory)
+
+        dao.list().forEach {
+            Log.e("INSERTED: ", it.toString())
+        }
+
+        val memoryInserted = dao.findById(memory.id)
+        Log.e("FOUND: ", memoryInserted.toString())
+
+        //if (MemoriesManager.instance.memories.size <= 0) { fillMemoriesWithExamples() }
 
         spOrder.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
             Order.values())
@@ -115,13 +145,17 @@ class MainActivity : AppCompatActivity(), LocationListener
         // make the channel. The method has been discussed before.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
-            makeNotificationChannel(CHANNEL, CHANNEL_NAME,
+            makeNotificationChannel(
+                CHANNEL,
+                CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_DEFAULT)
         }
         // the check ensures that the channel will only be made
         // if the device is running Android 8+
 
-        val notification = NotificationCompat.Builder(this, CHANNEL)
+        val notification = NotificationCompat.Builder(this,
+            CHANNEL
+        )
         // the second parameter is the channel id.
         // it should be the same as passed to the makeNotificationChannel() method
 
@@ -150,8 +184,10 @@ class MainActivity : AppCompatActivity(), LocationListener
 
         MemoriesManager.instance.addMemory(
             Memory(
-                "Mi pareja me dejó", "BlackList",
-                "Celebrando nuestro tercer aniversario decidió que no quería seguir conmigo", LatLng(41.667598, -0.892878)
+                "Mi pareja me dejó",
+                "BlackList",
+                "Celebrando nuestro tercer aniversario decidió que no quería seguir conmigo",
+                LatLng(41.667598, -0.892878)
             )
         )
 
@@ -164,8 +200,10 @@ class MainActivity : AppCompatActivity(), LocationListener
 
         MemoriesManager.instance.addMemory(
             Memory(
-                "Magia potagia", "Friends",
-                "Tarde en el teatro central viendo un espectáculo de magia con buena compañía", LatLng(41.651768, -0.879397)
+                "Magia potagia",
+                "Friends",
+                "Tarde en el teatro central viendo un espectáculo de magia con buena compañía",
+                LatLng(41.651768, -0.879397)
             )
         )
 
@@ -186,15 +224,20 @@ class MainActivity : AppCompatActivity(), LocationListener
 
     fun setList(order : Order?)
     {
-        listMemories.adapter = MemoryAdapter(this,
-            MemoriesManager.instance.getMemories(order))
+        listMemories.adapter =
+            MemoryListViewAdapter(
+                this,
+                MemoriesManager.instance.getMemories(order)
+            )
 
         listMemories.setOnItemClickListener { _, _, position, _ ->
             val item = MemoriesManager.instance.getMemories(order)[position]
             // The item that was clicked
             val intent = Intent(this, ViewMemory::class.java)
             intent.putExtra(ID, item.id)
-            startActivityForResult(intent, VIEW_MEMORY)
+            startActivityForResult(intent,
+                VIEW_MEMORY
+            )
         }
     }
 
@@ -213,7 +256,9 @@ class MainActivity : AppCompatActivity(), LocationListener
             R.id.addMemory -> {
                 val intent = Intent(this, ManageMemory::class.java)
                 intent.putExtra(ACTION, "New Memory")
-                startActivityForResult(intent, NEW_MEMORY)
+                startActivityForResult(intent,
+                    NEW_MEMORY
+                )
             }
 
             R.id.map ->

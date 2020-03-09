@@ -1,4 +1,4 @@
-package es.usj.mastertsa.fm.memoriesapp
+package es.usj.mastertsa.fm.memoriesapp.DomainLayer
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -7,8 +7,9 @@ import java.util.*
 enum class Categories { Bad, BlackList, Celebration, Friends, Good, Love, Travel }
 
 class Memory(
+    var id : Int = 0,
     var title: String,
-    category: String,
+    category : String,
     var description: String,
     var location: LatLng,
     var date: Date = Date(),
@@ -16,7 +17,7 @@ class Memory(
     var videoPath: String? = null,
     var audioPath: String? = null
 ) {
-    var id : Int = 0
+
     var category : Categories
 
     init {

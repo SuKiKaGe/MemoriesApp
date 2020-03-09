@@ -1,4 +1,4 @@
-package es.usj.mastertsa.fm.memoriesapp
+package es.usj.mastertsa.fm.memoriesapp.PresentationLayer
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -12,6 +12,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import es.usj.mastertsa.fm.memoriesapp.DomainLayer.*
+import es.usj.mastertsa.fm.memoriesapp.R
 import kotlinx.android.synthetic.main.activity_view_memory.*
 import kotlinx.android.synthetic.main.activity_view_memory.imgBtnAudio
 import kotlinx.android.synthetic.main.activity_view_memory.imgBtnPhoto
@@ -50,8 +52,13 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
             imgBtnPhoto.setOnClickListener {
                 val intent = Intent(this, ViewMemoryPhoto::class.java)
                 intent.putExtra(CURRENT_MULTIMEDIA_PATH, memory.photoPath)
-                intent.putExtra(MULTIMEDIA, MULTIMEDIA_PHOTO)
-                startActivityForResult(intent, VIEW_MEMORY_PHOTO)
+                intent.putExtra(
+                    MULTIMEDIA,
+                    MULTIMEDIA_PHOTO
+                )
+                startActivityForResult(intent,
+                    VIEW_MEMORY_PHOTO
+                )
             }
         }
 
@@ -61,8 +68,13 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
             imgBtnVideo.setOnClickListener {
                 val intent = Intent(this, ViewMemoryPhoto::class.java)
                 intent.putExtra(CURRENT_MULTIMEDIA_PATH, memory.videoPath)
-                intent.putExtra(MULTIMEDIA, MULTIMEDIA_VIDEO)
-                startActivityForResult(intent, VIEW_MEMORY_PHOTO)
+                intent.putExtra(
+                    MULTIMEDIA,
+                    MULTIMEDIA_VIDEO
+                )
+                startActivityForResult(intent,
+                    VIEW_MEMORY_PHOTO
+                )
             }
         }
 
@@ -72,8 +84,13 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
             imgBtnAudio.setOnClickListener {
                 val intent = Intent(this, ViewMemoryPhoto::class.java)
                 intent.putExtra(CURRENT_MULTIMEDIA_PATH, memory.audioPath)
-                intent.putExtra(MULTIMEDIA, MULTIMEDIA_AUDIO)
-                startActivityForResult(intent, VIEW_MEMORY_PHOTO)
+                intent.putExtra(
+                    MULTIMEDIA,
+                    MULTIMEDIA_AUDIO
+                )
+                startActivityForResult(intent,
+                    VIEW_MEMORY_PHOTO
+                )
             }
         }
 
@@ -96,7 +113,9 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
                 val intent = Intent(this, ManageMemory::class.java)
                 intent.putExtra(ACTION, "Edit Memory")
                 intent.putExtra(ID, id)
-                startActivityForResult(intent, UPDATE_MEMORY)
+                startActivityForResult(intent,
+                    UPDATE_MEMORY
+                )
             }
 
             R.id.delete -> {

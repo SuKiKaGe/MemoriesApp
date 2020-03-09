@@ -1,4 +1,4 @@
-package es.usj.mastertsa.fm.memoriesapp
+package es.usj.mastertsa.fm.memoriesapp.PresentationLayer
 
 import android.Manifest
 import android.content.Context
@@ -18,10 +18,14 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import es.usj.mastertsa.fm.memoriesapp.Categories.*
+import es.usj.mastertsa.fm.memoriesapp.DomainLayer.ACTION
+import es.usj.mastertsa.fm.memoriesapp.DomainLayer.MemoriesManager
+import es.usj.mastertsa.fm.memoriesapp.DomainLayer.NEW_MEMORY
+import es.usj.mastertsa.fm.memoriesapp.R
 import kotlinx.android.synthetic.main.activity_create_memory.mapFragment
 
-class MapActivity : AppCompatActivity(), LocationListener, MapFragment.MapInterface
+class MapActivity : AppCompatActivity(), LocationListener,
+    MapFragment.MapInterface
 {
     private lateinit var location : LatLng
 
@@ -89,7 +93,9 @@ class MapActivity : AppCompatActivity(), LocationListener, MapFragment.MapInterf
             R.id.addMemory -> {
                 val intent = Intent(this, ManageMemory::class.java)
                 intent.putExtra(ACTION, "New Memory")
-                startActivityForResult(intent, NEW_MEMORY)
+                startActivityForResult(intent,
+                    NEW_MEMORY
+                )
             }
 
             R.id.main ->

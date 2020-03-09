@@ -24,8 +24,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
-        <activity android:name=".MapActivity" />
-        <activity android:name=".ViewMemoryPhoto" />
+        <activity android:name=".PresentationLayer.MapActivity" />
+        <activity android:name=".PresentationLayer.ViewMemoryPhoto" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -41,10 +41,10 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".MemoryAdapter" />
-        <activity android:name=".ViewMemory" />
-        <activity android:name=".ManageMemory" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".PresentationLayer.MemoryListViewAdapter" />
+        <activity android:name=".PresentationLayer.ViewMemory" />
+        <activity android:name=".PresentationLayer.ManageMemory" />
+        <activity android:name=".PresentationLayer.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

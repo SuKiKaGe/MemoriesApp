@@ -1,4 +1,4 @@
-package es.usj.mastertsa.fm.memoriesapp
+package es.usj.mastertsa.fm.memoriesapp.PresentationLayer
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -8,11 +8,13 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import es.usj.mastertsa.fm.memoriesapp.DomainLayer.Memory
+import es.usj.mastertsa.fm.memoriesapp.R
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class MemoryAdapter(context : Context, private val dataSource : ArrayList<Memory>) : BaseAdapter()
+class MemoryListViewAdapter(context : Context, private val dataSource : ArrayList<Memory>) : BaseAdapter()
 {
     private val inflater : LayoutInflater =
         context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -36,7 +38,8 @@ class MemoryAdapter(context : Context, private val dataSource : ArrayList<Memory
     override fun getView(position : Int, convertView : View?, parent : ViewGroup) : View
     {
         // Get view for row item
-        val rowView = inflater.inflate(R.layout.activity_memory_adapter, parent,
+        val rowView = inflater.inflate(
+            R.layout.activity_memory_adapter, parent,
             false)
 
         val titleTextView = rowView.findViewById(R.id.tvTitle) as TextView

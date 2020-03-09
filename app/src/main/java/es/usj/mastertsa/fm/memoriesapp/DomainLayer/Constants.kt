@@ -1,4 +1,4 @@
-package es.usj.mastertsa.fm.memoriesapp
+package es.usj.mastertsa.fm.memoriesapp.DomainLayer
 
 //region Main
 const val UNMODIFIED = 0

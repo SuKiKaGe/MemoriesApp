@@ -1,4 +1,4 @@
-package es.usj.mastertsa.fm.memoriesapp
+package es.usj.mastertsa.fm.memoriesapp.PresentationLayer
 
 import android.app.Activity
 import android.content.Intent
@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
+import es.usj.mastertsa.fm.memoriesapp.DomainLayer.*
+import es.usj.mastertsa.fm.memoriesapp.R
 import kotlinx.android.synthetic.main.activity_view_memory_multimedia.*
 
 class ViewMemoryPhoto : AppCompatActivity()
@@ -48,7 +50,8 @@ class ViewMemoryPhoto : AppCompatActivity()
             {
                 imageView.visibility = View.VISIBLE
                 imageView.setImageDrawable(ContextCompat.getDrawable(this,
-                    R.drawable.audio_playing))
+                    R.drawable.audio_playing
+                ))
                 videoView.visibility = View.GONE
                 val uri = Uri.parse(currentPath)
                 val mediaPlayer = MediaPlayer.create(this, uri)

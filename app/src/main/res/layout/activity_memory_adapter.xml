@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:weightSum="5"
-    tools:context=".MemoryAdapter">
+    tools:context=".PresentationLayer.MemoryListViewAdapter">
 
     <LinearLayout
         android:id="@+id/RowLayout"

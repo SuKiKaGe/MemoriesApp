@@ -1,11 +1,14 @@
-package es.usj.mastertsa.fm.memoriesapp
+package es.usj.mastertsa.fm.memoriesapp.DomainLayer
+
+import es.usj.mastertsa.fm.memoriesapp.PresentationLayer.Order
 
 class MemoriesManager private constructor()
 {
     //region Singleton
     private object HOLDER
     {
-        val INSTANCE = MemoriesManager()
+        val INSTANCE =
+            MemoriesManager()
     }
 
     companion object
@@ -17,7 +20,8 @@ class MemoriesManager private constructor()
     var memories : ArrayList<Memory> = ArrayList()
     private var maxId : Int = 1
     lateinit var tempMemory : Memory
-    var orderSelected : Order = Order.Date
+    var orderSelected : Order =
+        Order.Date
 
     fun addMemory(newMemory : Memory)
     {
