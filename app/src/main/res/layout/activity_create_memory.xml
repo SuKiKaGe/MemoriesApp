@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:ignore="NestedWeights"
-    tools:context=".PresentationLayer.ManageMemory">
+    tools:context=".presentation_layer.ManageMemory">
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -211,8 +211,7 @@
                     android:background="#00000000"
                     android:clickable="false"
                     android:contentDescription="@string/photo_image_content_description"
-                    android:src="@drawable/photo_not_available"
-                    tools:srcCompat="@drawable/photo_not_available" />
+                    android:src="@drawable/ic_launcher_background" />
 
                 <ImageButton
                     android:id="@+id/imgBtnVideo"
@@ -222,8 +221,7 @@
                     android:background="#00000000"
                     android:clickable="false"
                     android:contentDescription="@string/video_image_content_description"
-                    android:src="@drawable/video_not_available"
-                    tools:srcCompat="@drawable/video_not_available" />
+                    android:src="@drawable/ic_launcher_background" />
 
                 <ImageButton
                     android:id="@+id/imgBtnAudio"
@@ -233,8 +231,7 @@
                     android:background="#00000000"
                     android:clickable="false"
                     android:contentDescription="@string/audio_image_content_description"
-                    android:src="@drawable/audio_not_available"
-                    tools:srcCompat="@drawable/audio_not_available" />
+                    android:src="@drawable/ic_launcher_background" />
 
             </LinearLayout>
 
@@ -244,7 +241,7 @@
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="es.usj.mastertsa.fm.memoriesapp.PresentationLayer.MapFragment"
+        android:name="es.usj.mastertsa.fm.memoriesapp.presentation_layer.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

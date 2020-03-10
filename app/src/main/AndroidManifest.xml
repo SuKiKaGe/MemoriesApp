@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission. ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -22,10 +22,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
-        <activity android:name=".PresentationLayer.MapActivity" />
-        <activity android:name=".PresentationLayer.ViewMemoryPhoto" />
+        <activity android:name=".presentation_layer.MapActivity" />
+        <activity android:name=".presentation_layer.ViewMemoryPhoto" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -41,10 +42,10 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".PresentationLayer.MemoryListViewAdapter" />
-        <activity android:name=".PresentationLayer.ViewMemory" />
-        <activity android:name=".PresentationLayer.ManageMemory" />
-        <activity android:name=".PresentationLayer.MainActivity">
+        <activity android:name=".presentation_layer.MemoryListViewAdapter" />
+        <activity android:name=".presentation_layer.ViewMemory" />
+        <activity android:name=".presentation_layer.ManageMemory" />
+        <activity android:name=".presentation_layer.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
