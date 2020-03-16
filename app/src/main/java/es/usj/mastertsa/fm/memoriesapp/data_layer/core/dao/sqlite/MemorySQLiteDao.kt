@@ -1,5 +1,6 @@
 package es.usj.mastertsa.fm.memoriesapp.data_layer.core.dao.sqlite
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -9,9 +10,9 @@ import es.usj.mastertsa.fm.memoriesapp.data_layer.core.IDao
 import es.usj.mastertsa.fm.memoriesapp.data_layer.model.MemoryModel
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 const val MEMORIES_TABLE = "memories"
-
 const val ID = "rowid"
 const val TITLE = "title"
 const val CATEGORY = "category"
@@ -23,10 +24,9 @@ const val PHOTOPATH = "photoPath"
 const val VIDEOPATH = "videoPath"
 const val AUDIOPATH = "audioPath"
 
-class MemorySQLiteDao(context : Context) :
-    IDao<MemoryModel>
+class MemorySQLiteDao(context : Context) : IDao<MemoryModel>
 {
-    var databaseHelper : MemoriesSQLOpenHelper
+    private var databaseHelper : MemoriesSQLOpenHelper
 
     init
     {
@@ -41,16 +41,20 @@ class MemorySQLiteDao(context : Context) :
         databaseHelper = helper
     }
 
-    private val SELECT = "SELECT $ID, $TITLE, $CATEGORY, $DESCRIPTION, $LATITUDE, $LONGITUDE, $DATE, $PHOTOPATH, $VIDEOPATH, $AUDIOPATH FROM $MEMORIES_TABLE"
+    private val select = "SELECT $ID, $TITLE, $CATEGORY, $DESCRIPTION, $LATITUDE, $LONGITUDE, $DATE, $PHOTOPATH, $VIDEOPATH, $AUDIOPATH FROM $MEMORIES_TABLE"
 
-    override fun insert(element: MemoryModel): MemoryModel {
-        val id = databaseHelper.writableDatabase
+    override fun insert(element : MemoryModel) : MemoryModel
+    {
+        val id : Long = databaseHelper.writableDatabase
             .insert(MEMORIES_TABLE, "", element.toContentValues())
+
         element.id = id
+
         return element
     }
 
-    override fun update(element: MemoryModel): Long? {
+    override fun update(element : MemoryModel) : Long?
+    {
         return databaseHelper.writableDatabase.update(
             MEMORIES_TABLE,
             element.toContentValues(),
@@ -59,29 +63,39 @@ class MemorySQLiteDao(context : Context) :
         ).toLong()
     }
 
-    override fun delete(id: Long): MemoryModel? {
-        val element = findById(id)
+    override fun delete(id : Long) : MemoryModel?
+    {
+        val element : MemoryModel? = findById(id)
+
         if(element != null)
             databaseHelper.writableDatabase.delete(MEMORIES_TABLE, "$ID = $id", null)
+
         return element
     }
 
-    override fun list(): List<MemoryModel> {
-        val result = arrayListOf<MemoryModel>()
-        val cursor = databaseHelper.readableDatabase.
-            rawQuery(SELECT, null)
-        if(cursor.moveToFirst()) {
+    @SuppressLint("Recycle")
+    override fun list() : List<MemoryModel>
+    {
+        val result : ArrayList<MemoryModel> = arrayListOf()
+        val cursor : Cursor = databaseHelper.readableDatabase.
+            rawQuery(select, null)
+
+        if(cursor.moveToFirst())
+        {
             do {
-                val memory = cursor.getMemory()
+                val memory : MemoryModel? = cursor.getMemory()
+
                 result.add(memory!!)
             } while (cursor.moveToNext())
         }
+
         return result
     }
 
-    override fun findById(id: Long): MemoryModel? {
+    override fun findById(id : Long) : MemoryModel?
+    {
         var memory : MemoryModel? = null
-        val cursor = databaseHelper.readableDatabase.
+        val cursor : Cursor = databaseHelper.readableDatabase.
             query(
                 table = MEMORIES_TABLE,
                 columns = arrayOf(
@@ -96,26 +110,30 @@ class MemorySQLiteDao(context : Context) :
                     VIDEOPATH,
                     AUDIOPATH
                 ),
-                whereClause =  "$ID = ?",
+                whereClause = "$ID = ?",
                 whereArgs = arrayOf("$id"))
-        if(cursor.moveToFirst()) {
+
+        if(cursor.moveToFirst())
+        {
             memory = cursor.getMemory()
         }
+
         return memory
     }
 }
 
-private fun Cursor.getMemory(): MemoryModel? {
-    val id = getLong(0)
-    val title = getString(1)
-    val category = getString(2)
-    val description = getString(3)
-    val latitude = getFloat(4)
-    val longitude = getFloat(5)
-    val date = getString(6).toDate()
-    val photoPath = getString(7)
-    val videoPath = getString(8)
-    val audioPath = getString(9)
+private fun Cursor.getMemory() : MemoryModel?
+{
+    val id : Long = getLong(0)
+    val title : String = getString(1)
+    val category : String = getString(2)
+    val description : String = getString(3)
+    val latitude : Float = getFloat(4)
+    val longitude : Float = getFloat(5)
+    val date : Date = getString(6).toDate()
+    val photoPath : String? = getString(7)
+    val videoPath : String? = getString(8)
+    val audioPath : String? = getString(9)
 
     return MemoryModel(
         id,
@@ -131,32 +149,37 @@ private fun Cursor.getMemory(): MemoryModel? {
     )
 }
 
-private fun String.toDate(): Date {
+@SuppressLint("SimpleDateFormat")
+private fun String.toDate() : Date
+{
     val formatter = SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS")
+
     return formatter.parse(this)!!
 }
 
-private fun SQLiteDatabase.query(table: String, columns: Array<String>, whereClause: String, whereArgs: Array<String>): Cursor {
-    return query(table, columns,
-        whereClause, whereArgs, null, null, null)
+private fun SQLiteDatabase.query(table : String, columns : Array<String>, whereClause : String,
+                                 whereArgs : Array<String>) : Cursor
+{
+    return query(table, columns, whereClause, whereArgs, null, null, null)
 }
 
-private fun MemoryModel.toContentValues(): ContentValues = ContentValues().apply {
-        if(id != 0L) put(ID, id)
-        put(TITLE, title)
-        put(CATEGORY, category)
-        put(DESCRIPTION, description)
-        put(LATITUDE, latitude)
-        put(LONGITUDE, longitude)
-        put(DATE, date.convertToIso())
-        put(PHOTOPATH, photoPath)
-        put(VIDEOPATH, videoPath)
-        put(AUDIOPATH, audioPath)
-    }
+private fun MemoryModel.toContentValues() : ContentValues = ContentValues().apply {
+    if(id != 0L) put(ID, id)
+    put(TITLE, title)
+    put(CATEGORY, category)
+    put(DESCRIPTION, description)
+    put(LATITUDE, latitude)
+    put(LONGITUDE, longitude)
+    put(DATE, date.convertToIso())
+    put(PHOTOPATH, photoPath)
+    put(VIDEOPATH, videoPath)
+    put(AUDIOPATH, audioPath)
+}
 
-private fun Date.convertToIso(): String?
+@SuppressLint("SimpleDateFormat")
+private fun Date.convertToIso() : String?
 {
     val formatter = SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS")
+
     return formatter.format(this)
 }
-

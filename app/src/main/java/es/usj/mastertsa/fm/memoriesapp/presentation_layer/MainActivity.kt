@@ -14,7 +14,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -28,12 +27,10 @@ import androidx.core.app.NotificationCompat
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import es.usj.mastertsa.fm.memoriesapp.*
-import es.usj.mastertsa.fm.memoriesapp.data_layer.model.MemoryModel
 import es.usj.mastertsa.fm.memoriesapp.domain_layer.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.*
 
 @Suppress("EnumEntryName")
 enum class Order { Date, Name_A_Z, Name_Z_A, Category_A_Z, Category_Z_A }
@@ -48,12 +45,15 @@ class MainActivity : AppCompatActivity(), LocationListener
 
         MemoriesManager.instance.init(this)
 
+        ImageManager.setContext(this)
+
         ImageManager.hoardRequiredImages()
 
         spOrder.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
             Order.values())
         spOrder.setSelection(MemoriesManager.instance.orderSelected.ordinal)
         spOrder.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+
             override fun onNothingSelected(parent : AdapterView<*>?) { }
 
             override fun onItemSelected(parent : AdapterView<*>?, view : View?, position : Int, id : Long)
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), LocationListener
 
         setList(null)
 
-        val locationManager = getSystemService(Context.LOCATION_SERVICE)
+        val locationManager : LocationManager = getSystemService(Context.LOCATION_SERVICE)
                 as LocationManager
 
         if (ActivityCompat.checkSelfPermission(this,
@@ -83,25 +83,28 @@ class MainActivity : AppCompatActivity(), LocationListener
         }
         else
         {
-            locationManager.requestSingleUpdate( LocationManager.NETWORK_PROVIDER,
+            locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER,
                 this, Looper.getMainLooper())
         }
 
-        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) requestGPS()
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) requestGPS()
     }
 
     private fun requestGPS()
     {
         val builder = AlertDialog.Builder(this@MainActivity)
+
         builder.setTitle("Location")
         builder.setMessage("The location must be enable")
-        builder.setPositiveButton("YES"){dialog, which ->
+        builder.setPositiveButton("YES"){ _, _ ->
             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
         }
-        builder.setNegativeButton("No"){dialog,which ->
+        builder.setNegativeButton("No"){ _, _ ->
             Toast.makeText(applicationContext,"You are not agree.",Toast.LENGTH_SHORT).show()
         }
+
         val dialog: AlertDialog = builder.create()
+
         dialog.show()
     }
 
@@ -109,9 +112,11 @@ class MainActivity : AppCompatActivity(), LocationListener
     fun makeNotificationChannel(id : String, name : String, importance : Int)
     {
         val channel = NotificationChannel(id, name, importance)
+
         channel.setShowBadge(true) // set false to disable badges, Oreo exclusive
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
+        val notificationManager : NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE)
                 as NotificationManager
 
         notificationManager.createNotificationChannel(channel)
@@ -142,7 +147,8 @@ class MainActivity : AppCompatActivity(), LocationListener
             .setContentText(notification_text)
             .setNumber(3) // this shows a number in the notification dots
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
+        val notificationManager : NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE)
                 as NotificationManager
 
         notificationManager.notify(1, notification.build())
@@ -158,10 +164,13 @@ class MainActivity : AppCompatActivity(), LocationListener
             )
 
         listMemories.setOnItemClickListener { _, _, position, _ ->
-            val item = MemoriesManager.instance.getMemories(order)[position]
+            val item : Memory = MemoriesManager.instance.getMemories(order)[position]
+
             // The item that was clicked
             val intent = Intent(this, ViewMemory::class.java)
+
             intent.putExtra(ID, item.id)
+
             startActivityForResult(intent,
                 VIEW_MEMORY
             )
@@ -182,7 +191,9 @@ class MainActivity : AppCompatActivity(), LocationListener
         {
             R.id.addMemory -> {
                 val intent = Intent(this, ManageMemory::class.java)
+
                 intent.putExtra(ACTION, "New Memory")
+
                 startActivityForResult(intent,
                     NEW_MEMORY
                 )
@@ -191,6 +202,7 @@ class MainActivity : AppCompatActivity(), LocationListener
             R.id.map ->
             {
                 val intent = Intent(this, MapActivity::class.java)
+
                 startActivity(intent)
             }
 
@@ -207,15 +219,15 @@ class MainActivity : AppCompatActivity(), LocationListener
     {
         val location = LatLng(p0!!.latitude, p0.longitude)
 
-        for (memory in MemoriesManager.instance.getMemories(null))
+        for (memory : Memory in MemoriesManager.instance.getMemories(null))
         {
             val distanceToMemoryLocation : Double =
                 (SphericalUtil.computeDistanceBetween(location, memory.location))
 
-            val roundDistanceToMemoryLocation =
+            val roundDistanceToMemoryLocation : BigDecimal =
                 BigDecimal(distanceToMemoryLocation).setScale(2, RoundingMode.HALF_EVEN)
 
-            if (distanceToMemoryLocation <= minimumDistanceToNotifyDangerZone
+            if (distanceToMemoryLocation <= MINIMUM_DISTANCE_TO_NOTIFY_DANGER_ZONE
                 && memory.category == Categories.BlackList)
             {
                 issueNotification(

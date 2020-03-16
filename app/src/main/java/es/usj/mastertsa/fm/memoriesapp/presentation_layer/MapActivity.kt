@@ -22,10 +22,10 @@ import es.usj.mastertsa.fm.memoriesapp.domain_layer.ACTION
 import es.usj.mastertsa.fm.memoriesapp.domain_layer.MemoriesManager
 import es.usj.mastertsa.fm.memoriesapp.domain_layer.NEW_MEMORY
 import es.usj.mastertsa.fm.memoriesapp.R
+import es.usj.mastertsa.fm.memoriesapp.domain_layer.Memory
 import kotlinx.android.synthetic.main.activity_create_memory.mapFragment
 
-class MapActivity : AppCompatActivity(), LocationListener,
-    MapFragment.MapInterface
+class MapActivity : AppCompatActivity(), LocationListener, MapFragment.MapInterface
 {
     private lateinit var location : LatLng
 
@@ -34,7 +34,7 @@ class MapActivity : AppCompatActivity(), LocationListener,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-        val locationManager = getSystemService(Context.LOCATION_SERVICE)
+        val locationManager : LocationManager = getSystemService(Context.LOCATION_SERVICE)
                 as LocationManager
 
         if (ActivityCompat.checkSelfPermission(this,
@@ -59,9 +59,10 @@ class MapActivity : AppCompatActivity(), LocationListener,
 
     override fun locateMap(map : GoogleMap?)
     {
-        for (memory in MemoriesManager.instance.getMemories(null))
+        for (memory : Memory in MemoriesManager.instance.getMemories(null))
         {
-            map?.addMarker(MarkerOptions().position(memory.location).icon(BitmapDescriptorFactory.defaultMarker(memory.getColor())))
+            map?.addMarker(MarkerOptions().position(memory.location).icon(
+                BitmapDescriptorFactory.defaultMarker(memory.getColor())))
         }
 
         map?.isMyLocationEnabled = true

@@ -6,27 +6,27 @@ import es.usj.mastertsa.fm.memoriesapp.data_layer.core.factories.RoomDaoFactory
 import es.usj.mastertsa.fm.memoriesapp.data_layer.core.factories.SQLDaoFactory
 import es.usj.mastertsa.fm.memoriesapp.data_layer.model.MemoryModel
 
-val DATASOURCE =
-    DatasourceType.SQLITE
+val DATASOURCE = DatasourceType.SQLITE
 
 enum class DatasourceType { SQLITE, FIREBASE}
 
-abstract class DaoFactory {
-
+abstract class DaoFactory
+{
     companion object
     {
         fun getFactory() : DaoFactory
         {
-            if(DATASOURCE == DatasourceType.SQLITE)
+            return when (DATASOURCE)
             {
-                return SQLDaoFactory()
-            } else if (DATASOURCE == DatasourceType.FIREBASE)
-            {
-                return FirebaseDaoFactory()
-            }
-            else
-            {
-                return RoomDaoFactory()
+                DatasourceType.SQLITE -> {
+                    SQLDaoFactory()
+                }
+                DatasourceType.FIREBASE -> {
+                    FirebaseDaoFactory()
+                }
+                else -> {
+                    RoomDaoFactory()
+                }
             }
         }
     }

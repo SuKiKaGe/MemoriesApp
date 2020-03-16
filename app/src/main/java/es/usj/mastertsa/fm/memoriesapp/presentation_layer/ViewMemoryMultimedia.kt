@@ -8,7 +8,6 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import androidx.core.content.ContextCompat
 import es.usj.mastertsa.fm.memoriesapp.domain_layer.*
 import es.usj.mastertsa.fm.memoriesapp.R
 import kotlinx.android.synthetic.main.activity_view_memory_multimedia.*
@@ -24,7 +23,7 @@ class ViewMemoryPhoto : AppCompatActivity()
 
         id = intent.getIntExtra(ID,0)
 
-        val currentPath = intent.getStringExtra(CURRENT_MULTIMEDIA_PATH)
+        val currentPath : String? = intent.getStringExtra(CURRENT_MULTIMEDIA_PATH)
 
         when(intent.getIntExtra(MULTIMEDIA, 40))
         {
@@ -41,7 +40,7 @@ class ViewMemoryPhoto : AppCompatActivity()
             {
                 imageView.visibility = View.GONE
                 videoView.visibility = View.VISIBLE
-                val uri = Uri.parse(currentPath)
+                val uri : Uri = Uri.parse(currentPath)
                 videoView.setVideoURI(uri)
                 videoView.start()
             }
@@ -49,15 +48,10 @@ class ViewMemoryPhoto : AppCompatActivity()
             MULTIMEDIA_AUDIO ->
             {
                 imageView.visibility = View.VISIBLE
-                /*
-                imageView.setImageDrawable(ContextCompat.getDrawable(this,
-                    R.drawable.audio_playing
-                ))
-                */
                 imageView.setImageBitmap(ImageManager.getImage(ImageType.audio_playing))
                 videoView.visibility = View.GONE
-                val uri = Uri.parse(currentPath)
-                val mediaPlayer = MediaPlayer.create(this, uri)
+                val uri : Uri = Uri.parse(currentPath)
+                val mediaPlayer : MediaPlayer = MediaPlayer.create(this, uri)
                 mediaPlayer.start()
             }
         }
@@ -66,6 +60,7 @@ class ViewMemoryPhoto : AppCompatActivity()
     override fun onBackPressed()
     {
         val resultIntent = Intent()
+
         resultIntent.putExtra(ID, id)
         setResult(Activity.RESULT_OK, resultIntent)
         finish()

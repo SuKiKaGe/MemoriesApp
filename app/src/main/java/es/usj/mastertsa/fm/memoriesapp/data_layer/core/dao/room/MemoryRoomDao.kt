@@ -1,3 +1,5 @@
+@file:Suppress("AndroidUnresolvedRoomSqlReference")
+
 package es.usj.mastertsa.fm.memoriesapp.data_layer.core.dao.room
 
 import androidx.room.*
@@ -23,30 +25,32 @@ interface MemoryIDAO
     fun update(memory : MemoryModel)
 }
 
-class MemoryRoomDao :
-    IDao<MemoryModel> {
-
-    val memoryIDAO : MemoryIDAO? = null
-
+class MemoryRoomDao : IDao<MemoryModel>
+{
+    private val memoryIDAO : MemoryIDAO? = null
 
     override fun insert(element : MemoryModel) : MemoryModel
     {
         return memoryIDAO!!.insert(element)
     }
 
-    override fun update(element : MemoryModel): Long? {
+    override fun update(element : MemoryModel) : Long?
+    {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun delete(id: Long): MemoryModel? {
+    override fun delete(id : Long) : MemoryModel?
+    {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun list(): List<MemoryModel> {
+    override fun list() : List<MemoryModel>
+    {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun findById(id: Long): MemoryModel? {
+    override fun findById(id : Long) : MemoryModel?
+    {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

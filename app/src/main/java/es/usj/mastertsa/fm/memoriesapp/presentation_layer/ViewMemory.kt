@@ -24,7 +24,7 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
 {
     var id : Int = 0
     private lateinit var location : LatLng
-    var color: Float = 0f
+    var color : Float = 0f
 
     override fun onCreate(savedInstanceState : Bundle?)
     {
@@ -39,9 +39,7 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
     @SuppressLint("SimpleDateFormat")
     private fun setViewContent()
     {
-        //val memory = MemoriesManager.instance.memories.find { it.id == id }!!
-
-        val memory = MemoriesManager.instance.findMemory(id)!!
+        val memory : Memory = MemoriesManager.instance.findMemory(id)!!
 
         title = memory.title
         tvCategoryItem.text = memory.category.toString()
@@ -50,7 +48,6 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
 
         if (!memory.photoPath.isNullOrEmpty())
         {
-            //imgBtnPhoto.setImageResource(R.drawable.photo_available)
             imgBtnPhoto.setImageBitmap(ImageManager.getImage(ImageType.photo_available))
             imgBtnPhoto.setOnClickListener {
                 val intent = Intent(this, ViewMemoryPhoto::class.java)
@@ -71,7 +68,6 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
 
         if (!memory.videoPath.isNullOrEmpty())
         {
-            //imgBtnVideo.setImageResource(R.drawable.video_available)
             imgBtnVideo.setImageBitmap(ImageManager.getImage(ImageType.video_available))
             imgBtnVideo.setOnClickListener {
                 val intent = Intent(this, ViewMemoryPhoto::class.java)
@@ -92,7 +88,6 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
 
         if (!memory.audioPath.isNullOrEmpty())
         {
-            //imgBtnAudio.setImageResource(R.drawable.audio_available)
             imgBtnAudio.setImageBitmap(ImageManager.getImage(ImageType.audio_available))
             imgBtnAudio.setOnClickListener {
                 val intent = Intent(this, ViewMemoryPhoto::class.java)
@@ -166,7 +161,8 @@ class ViewMemory : AppCompatActivity(), MapFragment.MapInterface
 
     override fun locateMap(map : GoogleMap?)
     {
-        map?.addMarker(MarkerOptions().position(location).icon(BitmapDescriptorFactory.defaultMarker(color)))
+        map?.addMarker(MarkerOptions().position(location).icon(
+            BitmapDescriptorFactory.defaultMarker(color)))
         map?.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10f))
     }
 }

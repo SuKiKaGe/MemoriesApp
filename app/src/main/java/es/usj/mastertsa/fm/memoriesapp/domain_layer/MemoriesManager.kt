@@ -12,8 +12,7 @@ class MemoriesManager private constructor()
     //region Singleton
     private object HOLDER
     {
-        val INSTANCE =
-            MemoriesManager()
+        val INSTANCE = MemoriesManager()
     }
 
     companion object
@@ -22,7 +21,7 @@ class MemoriesManager private constructor()
     }
     //endregion
 
-    lateinit var dao : IDao<MemoryModel>
+    private lateinit var dao : IDao<MemoryModel>
     lateinit var tempMemory : Memory
     var orderSelected : Order = Order.Date
 
@@ -35,7 +34,7 @@ class MemoriesManager private constructor()
 
     fun addMemory(newMemory : Memory)
     {
-        val memoryModel = MemoryAdapter.getMemoryModelFromMemory(newMemory)
+        val memoryModel : MemoryModel = MemoryAdapter.getMemoryModelFromMemory(newMemory)
 
         dao.insert(memoryModel)
     }
@@ -47,12 +46,12 @@ class MemoriesManager private constructor()
 
     fun updateMemory(memory : Memory)
     {
-        val memoryModel = MemoryAdapter.getMemoryModelFromMemory(memory)
+        val memoryModel : MemoryModel = MemoryAdapter.getMemoryModelFromMemory(memory)
 
         dao.update(memoryModel)
     }
 
-    fun findMemory(id : Int): Memory?
+    fun findMemory(id : Int) : Memory?
     {
         if (id == 0)
         {
@@ -64,9 +63,7 @@ class MemoriesManager private constructor()
 
             if (memoryModel != null)
             {
-                val memory = MemoryAdapter.getMemoryFromMemoryModel(memoryModel)
-
-                return memory
+                return MemoryAdapter.getMemoryFromMemoryModel(memoryModel)
             }
         }
 
@@ -75,15 +72,15 @@ class MemoriesManager private constructor()
 
     fun getMemories(order : Order?) : ArrayList<Memory>
     {
-        val memoriesModel = dao.list()
+        val memoriesModel : List<MemoryModel> = dao.list()
 
-        var memories : ArrayList<Memory> = ArrayList()
+        val memories : ArrayList<Memory> = ArrayList()
 
         memoriesModel.forEach {
             memories.add(MemoryAdapter.getMemoryFromMemoryModel(it))
         }
 
-        if(order != null) orderSelected = order
+        if (order != null) orderSelected = order
 
         val orderMemories : List<Memory> = when(orderSelected)
         {
@@ -91,13 +88,13 @@ class MemoriesManager private constructor()
             Order.Name_A_Z -> memories.sortedBy { it.title }
             Order.Name_Z_A ->
             {
-                val temp = memories.sortedBy { it.title }
+                val temp : List<Memory> = memories.sortedBy { it.title }
                 temp.reversed()
             }
             Order.Category_A_Z -> { memories.sortedBy { it.category } }
             Order.Category_Z_A ->
             {
-                val temp = memories.sortedBy { it.category }
+                val temp : List<Memory> = memories.sortedBy { it.category }
                 temp.reversed()
             }
         }
@@ -111,7 +108,8 @@ class MemoriesManager private constructor()
             Memory(
                 1,
                 "Perdí 20 euros", "Bad",
-                "Estaba caminando por la calle y me di cuenta que en algún momento sacando el móvil se me calló un billete que llevaba en el bolsillo",
+                "Estaba caminando por la calle y me di cuenta que en algún momento" +
+                        "sacando el móvil se me calló un billete que llevaba en el bolsillo",
                 LatLng(41.671128, -0.889325)
             )
         )
@@ -121,42 +119,47 @@ class MemoriesManager private constructor()
                 2,
                 "Mi pareja me dejó",
                 "BlackList",
-                "Celebrando nuestro tercer aniversario decidió que no quería seguir conmigo",
+                "Celebrando nuestro tercer aniversario decidió que no quería seguir" +
+                        "conmigo",
                 LatLng(41.667598, -0.892878)
             )
         )
 
-        MemoriesManager.instance.addMemory(
+        instance.addMemory(
             Memory(
                 3,
                 "El Pilar", "Travel",
-                "Gran viaje a una ciudad preciosa y fría", LatLng(41.656565, -0.878166)
+                "Gran viaje a una ciudad preciosa y fría",
+                LatLng(41.656565, -0.878166)
             )
         )
 
-        MemoriesManager.instance.addMemory(
+        instance.addMemory(
             Memory(
                 4,
                 "Magia potagia",
                 "Friends",
-                "Tarde en el teatro central viendo un espectáculo de magia con buena compañía",
+                "Tarde en el teatro central viendo un espectáculo de magia con buena" +
+                        "compañía",
                 LatLng(41.651768, -0.879397)
             )
         )
 
-        MemoriesManager.instance.addMemory(
+        instance.addMemory(
             Memory(
                 5,
                 "Patrón USJ", "Celebration",
-                "Celebración del patrón de la universidad", LatLng(41.756797, -0.832194)
+                "Celebración del patrón de la universidad",
+                LatLng(41.756797, -0.832194)
             )
         )
 
-        MemoriesManager.instance.addMemory(
+        instance.addMemory(
             Memory(
                 6,
                 "Bienvenido a mi vida", "Love",
-                "Hemos adoptado a nuestro bebé, bienvenido Pancho", LatLng(41.767716, -0.825706)
+                "Hemos adoptado a nuestro bebé, bienvenido Pancho",
+                LatLng(41.767716, -0.825706)
             )
         )
     }

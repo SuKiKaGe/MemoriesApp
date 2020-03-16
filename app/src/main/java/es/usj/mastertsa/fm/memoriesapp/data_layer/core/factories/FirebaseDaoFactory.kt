@@ -8,7 +8,8 @@ import es.usj.mastertsa.fm.memoriesapp.data_layer.model.MemoryModel
 
 class FirebaseDaoFactory : DaoFactory()
 {
-    override fun getMemoryDAO(context : Context): IDao<MemoryModel> {
+    override fun getMemoryDAO(context : Context) : IDao<MemoryModel>
+    {
         return MemoryFirebaseDao()
     }
 }

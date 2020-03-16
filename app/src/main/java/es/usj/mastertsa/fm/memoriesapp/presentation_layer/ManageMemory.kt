@@ -44,8 +44,7 @@ import java.io.File
 import java.io.IOException
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "ControlFlowWithEmptyBody")
-class ManageMemory : AppCompatActivity(), LocationListener,
-    MapFragment.MapInterface
+class ManageMemory : AppCompatActivity(), LocationListener, MapFragment.MapInterface
 {
     private var idToEdit : Int = 0
     private var location : LatLng = LatLng(0.0,0.0)
@@ -73,7 +72,8 @@ class ManageMemory : AppCompatActivity(), LocationListener,
                 etDate.setText(SimpleDateFormat("dd/MM/yyyy",
                     Locale.getDefault()).format(Date()))
 
-                val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                val locationManager : LocationManager = getSystemService(Context.LOCATION_SERVICE)
+                        as LocationManager
 
                 imgBtnPhoto.setImageBitmap(ImageManager.getImage(ImageType.photo_not_available))
                 imgBtnVideo.setImageBitmap(ImageManager.getImage(ImageType.video_not_available))
@@ -113,9 +113,11 @@ class ManageMemory : AppCompatActivity(), LocationListener,
                 startActivityForResult(intent,
                     REQUEST_AUDIO_CAPTURE
                 )
-            }catch (e: ActivityNotFoundException)
+            }
+            catch (e : ActivityNotFoundException)
             {
-                Toast.makeText(this, "No default application for recording", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "No default application for recording",
+                    Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -159,6 +161,7 @@ class ManageMemory : AppCompatActivity(), LocationListener,
         // Create an image file name
         val timeStamp : String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val storageDir : File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
         return File.createTempFile(
             "JPEG_${timeStamp}_", /* prefix */
             ".jpg", /* suffix */
@@ -229,7 +232,7 @@ class ManageMemory : AppCompatActivity(), LocationListener,
         spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
             Categories.values())
 
-        val memory = MemoriesManager.instance.findMemory(id)
+        val memory : Memory? = MemoriesManager.instance.findMemory(id)
 
         etTitle.setText(memory?.title)
         spinner.setSelection(Categories.valueOf(memory?.category.toString()).ordinal)
@@ -309,6 +312,7 @@ class ManageMemory : AppCompatActivity(), LocationListener,
     override fun onCreateOptionsMenu(menu : Menu?) : Boolean
     {
         menuInflater.inflate(R.menu.options_create, menu)
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -366,7 +370,8 @@ class ManageMemory : AppCompatActivity(), LocationListener,
 
     override fun onActivityResult(requestCode : Int, resultCode : Int, data : Intent?)
     {
-        if ((requestCode == REQUEST_IMAGE_CAPTURE || requestCode == REQUEST_VIDEO_CAPTURE)&& resultCode == RESULT_OK)
+        if ((requestCode == REQUEST_IMAGE_CAPTURE || requestCode == REQUEST_VIDEO_CAPTURE)
+            && resultCode == RESULT_OK)
         {
             setEditData()
         }
@@ -392,7 +397,10 @@ class ManageMemory : AppCompatActivity(), LocationListener,
     {
         location = LatLng(p0!!.latitude, p0.longitude)
 
-        if(mapFragment != null) { (mapFragment as MapFragment).setNewLocation(location, true) }
+        if(mapFragment != null)
+        {
+            (mapFragment as MapFragment).setNewLocation(location, true)
+        }
     }
 
     override fun onStatusChanged(p0 : String?, p1 : Int, p2 : Bundle?) { }
@@ -406,7 +414,7 @@ class ManageMemory : AppCompatActivity(), LocationListener,
     private fun askForPermission() = if (ContextCompat.checkSelfPermission(this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED )
     {
-        if(!ActivityCompat.shouldShowRequestPermissionRationale(this,
+        if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)) {
             ActivityCompat.requestPermissions(
                 this,
@@ -426,10 +434,12 @@ class ManageMemory : AppCompatActivity(), LocationListener,
             else -> permissionGranted = false
         }
 
-    private fun checkPermissionBoolean(): Boolean
+    private fun checkPermissionBoolean() : Boolean
     {
-        return ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED
+        return ActivityCompat.checkSelfPermission(this,
+            ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this,
+            ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED
     }
     //endregion
 }
