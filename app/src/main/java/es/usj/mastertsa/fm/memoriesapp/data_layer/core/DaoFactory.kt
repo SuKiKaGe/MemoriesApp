@@ -1,14 +1,15 @@
 package es.usj.mastertsa.fm.memoriesapp.data_layer.core
 
 import android.content.Context
+import android.util.Log
 import es.usj.mastertsa.fm.memoriesapp.data_layer.core.factories.FirebaseDaoFactory
 import es.usj.mastertsa.fm.memoriesapp.data_layer.core.factories.RoomDaoFactory
 import es.usj.mastertsa.fm.memoriesapp.data_layer.core.factories.SQLDaoFactory
 import es.usj.mastertsa.fm.memoriesapp.data_layer.model.MemoryModel
 
-val DATASOURCE = DatasourceType.SQLITE
+val DATASOURCE = DatasourceType.ROOM
 
-enum class DatasourceType { SQLITE, FIREBASE}
+enum class DatasourceType { SQLITE, FIREBASE, ROOM}
 
 abstract class DaoFactory
 {
@@ -16,6 +17,8 @@ abstract class DaoFactory
     {
         fun getFactory() : DaoFactory
         {
+            Log.v("DATASOURCE", DATASOURCE.toString())
+
             return when (DATASOURCE)
             {
                 DatasourceType.SQLITE -> {

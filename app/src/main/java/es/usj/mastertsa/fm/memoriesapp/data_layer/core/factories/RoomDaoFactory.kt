@@ -10,6 +10,6 @@ class RoomDaoFactory : DaoFactory()
 {
     override fun getMemoryDAO(context : Context) : IDao<MemoryModel>
     {
-        return MemoryRoomDao()
+        return MemoryRoomDao(context)
     }
 }
