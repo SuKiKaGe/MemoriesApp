@@ -21,4 +21,4 @@ Some issues could occur when using Android Emulator due to use NETWORK_PROVIDER 
 Notifications only work on real devices, we do not know why because when we tested the projects we did it only on emulator...
 
 
-Copyright - USJ - Fran & Mar (2019-20)
+# Copyright - USJ - Fran & Mar (2019-20)
