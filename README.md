@@ -1,6 +1,6 @@
 # MemoriesApp
 
-Some issues could occur when using Android Emulator due to use NETWORK_PROVIDER instead of GPS_PROVIDER on some LocationManager functions, if so, please, change next code lines:
+Some issues could occur when using Android Emulator due to use NETWORK_PROVIDER instead of GPS_PROVIDER on some LocationManager calls, if so, please, change next code lines:
 
   - Android Subject Release:
 
